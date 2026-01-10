@@ -226,18 +226,18 @@ export default function About() {
           >
             {/* Intro Paragraph */}
             <p className="text-lg leading-relaxed text-gray-300">
-              Hello! I'm Shakir Ahmed, a passionate full-stack developer
+              Hello! I&apos;m Shakir Ahmed, a passionate full-stack developer
               specializing in creating innovative web solutions and user-friendly interfaces.{" "}
               <strong className="text-white font-semibold">
                 As a dedicated problem solver and creative thinker
               </strong>
-              , I'm committed to building exceptional digital experiences.
+              , I&apos;m committed to building exceptional digital experiences.
             </p>
 
             {/* Focus Paragraph */}
             <p className="text-gray-300 text-lg leading-relaxed">
               My focus is on making web development faster, easier, and
-              accessible to all. Currently, I'm expanding into
+              accessible to all. Currently, I&apos;m expanding into
               backend development to grow as a full-stack developer and
               create seamless, robust web applications.
             </p>
@@ -248,9 +248,9 @@ export default function About() {
                 className="quote-border absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500 to-blue-500 origin-top"
               />
               <p className="quote-text text-gray-400 text-base leading-relaxed italic">
-                I'm a lifelong learner and innovator, driven by a desire to
+                I&apos;m a lifelong learner and innovator, driven by a desire to
                 contribute to the developer community with new ideas and
-                tools that deliver real value. I'm passionate about
+                tools that deliver real value. I&apos;m passionate about
                 pushing the boundaries of web technologies to
                 empower developers worldwide.
               </p>
