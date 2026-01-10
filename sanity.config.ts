@@ -12,6 +12,7 @@ import {
   type DocumentLocation,
 } from "sanity/presentation";
 import { structureTool } from "sanity/structure";
+import project from "@/sanity/schemas/documents/project";
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
@@ -37,6 +38,7 @@ export default defineConfig({
       // Documents
       post,
       author,
+      project,
     ],
   },
   plugins: [
