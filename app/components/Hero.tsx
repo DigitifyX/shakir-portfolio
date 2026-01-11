@@ -259,7 +259,7 @@ export default function Hero() {
   ];
 
   return (
-    <section id="hero" className="relative py-[35px] md:h-[800px] md:py-0 md:pt-[60px] overflow-hidden hero-bg grid-pattern">
+    <section id="hero" className="relative pt-[100px] pb-[35px] md:h-[800px] md:py-0 md:pt-[164px] overflow-hidden hero-bg grid-pattern">
       {/* Vertical Falling Light Effects - Down the grid lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
         {verticalLights.map((light, index) => (
