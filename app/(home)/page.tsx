@@ -36,9 +36,9 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <Hero
-        badge={pageContent?.heroBadge}
-        heading={pageContent?.heroHeading}
-        subheading={pageContent?.heroSubheading}
+        badge={pageContent?.heroBadge ?? undefined}
+        heading={pageContent?.heroHeading ?? undefined}
+        subheading={pageContent?.heroSubheading ?? undefined}
       />
 
       {/* About Section */}
