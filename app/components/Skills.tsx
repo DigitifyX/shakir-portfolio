@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
+import AnimatedSectionHeading from "./AnimatedSectionHeading";
 
 // Technology data
 const technologies = [
@@ -234,11 +235,11 @@ function IconCloud() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cloudRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
-  
+
   // Rotation state
   const rotationRef = useRef({ x: 0, y: 0 });
   const velocityRef = useRef({ x: 0, y: DEFAULT_SPEED });
-  
+
   // Mouse tracking for velocity calculation
   const lastMouseRef = useRef({ x: 0, y: 0, time: 0 });
   const mouseVelocityRef = useRef({ x: 0, y: 0 });
@@ -259,7 +260,7 @@ function IconCloud() {
       const phi = Math.acos(1 - (2 * (i + 0.5)) / total);
       const theta = Math.PI * (1 + Math.sqrt(5)) * i;
 
-      const radius = 180;
+      const radius = 150;
       const x = radius * Math.sin(phi) * Math.cos(theta);
       const y = radius * Math.sin(phi) * Math.sin(theta);
       const z = radius * Math.cos(phi);
@@ -300,10 +301,10 @@ function IconCloud() {
       } else {
         // Not moving or outside sphere - use default speed in last direction
         const dirMagnitude = Math.sqrt(
-          lastDirectionRef.current.x * lastDirectionRef.current.x + 
+          lastDirectionRef.current.x * lastDirectionRef.current.x +
           lastDirectionRef.current.y * lastDirectionRef.current.y
         );
-        
+
         if (dirMagnitude > 0) {
           targetVelX = (lastDirectionRef.current.x / dirMagnitude) * DEFAULT_SPEED;
           targetVelY = (lastDirectionRef.current.y / dirMagnitude) * DEFAULT_SPEED;
@@ -325,21 +326,21 @@ function IconCloud() {
       // Update DOM directly for performance
       if (cloudRef.current) {
         const icons = cloudRef.current.children;
-        
+
         for (let i = 0; i < positions.length; i++) {
           const pos = positions[i];
           const { x, y, z } = transform3D(pos.x, pos.y, pos.z, rotationRef.current.x, rotationRef.current.y);
-          
+
           const depth = (z + 250) / 500;
           const scale = (0.5 + depth * 0.7) * pos.scale;
           const opacity = 0.2 + depth * 0.8;
-          
+
           const icon = icons[i] as HTMLElement;
           if (icon) {
             icon.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0px)`;
             icon.style.opacity = String(opacity);
             icon.style.zIndex = String(Math.round(z + 300));
-            
+
             const innerDiv = icon.firstChild as HTMLElement;
             if (innerDiv) {
               innerDiv.style.transform = `scale(${scale})`;
@@ -369,19 +370,19 @@ function IconCloud() {
     const distX = e.clientX - centerX;
     const distY = e.clientY - centerY;
     const distance = Math.sqrt(distX * distX + distY * distY);
-    
+
     // Check if inside sphere radius
     isInsideSphereRef.current = distance < 250;
 
     if (isInsideSphereRef.current) {
       const now = performance.now();
       const dt = now - lastMouseRef.current.time;
-      
+
       if (dt > 0 && lastMouseRef.current.time > 0) {
         // Calculate mouse velocity (pixels per ms, then scale for rotation)
         const dx = e.clientX - lastMouseRef.current.x;
         const dy = e.clientY - lastMouseRef.current.y;
-        
+
         // Convert mouse movement to rotation velocity
         // Horizontal mouse movement (dx) -> Y-axis rotation
         // Vertical mouse movement (dy) -> X-axis rotation
@@ -389,11 +390,11 @@ function IconCloud() {
         const sensitivity = 0.00003; // Much lower for comfortable speed
         const rawVelX = -dy * sensitivity * (1000 / dt); // Invert for natural feel
         const rawVelY = dx * sensitivity * (1000 / dt);
-        
+
         // Smooth the velocity to avoid jitter
         mouseVelocityRef.current.x = lerp(mouseVelocityRef.current.x, rawVelX, 0.3);
         mouseVelocityRef.current.y = lerp(mouseVelocityRef.current.y, rawVelY, 0.3);
-        
+
         // Update last direction if there's significant movement
         const speed = Math.sqrt(dx * dx + dy * dy);
         if (speed > 2) {
@@ -402,19 +403,19 @@ function IconCloud() {
             y: dx,  // Horizontal mouse -> Y rotation
           };
           isMovingRef.current = true;
-          
+
           // Clear existing timeout
           if (moveTimeoutRef.current) {
             clearTimeout(moveTimeoutRef.current);
           }
-          
+
           // Set timeout to detect when mouse stops moving
           moveTimeoutRef.current = setTimeout(() => {
             isMovingRef.current = false;
           }, 100);
         }
       }
-      
+
       lastMouseRef.current = { x: e.clientX, y: e.clientY, time: now };
     }
   }, []);
@@ -446,7 +447,7 @@ function IconCloud() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[450px] md:h-[550px]"
+      className="relative w-full h-[350px] md:h-[420px]"
     >
       {/* Center glow effect */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -471,13 +472,17 @@ function IconCloud() {
             <div
               className={`
                 group flex items-center justify-center rounded-xl
-                bg-[#0d1117]/90 border border-white/10 backdrop-blur-sm
-                transition-colors duration-200 hover:border-cyan-500/50 hover:bg-[#161b22]
+                border backdrop-blur-sm
+                transition-colors duration-200 hover:border-cyan-500/50
                 ${tech.isCenter ? 'shadow-lg shadow-cyan-500/20 w-14 h-14' : 'w-11 h-11'}
               `}
-              style={{ willChange: "transform" }}
+              style={{
+                backgroundColor: 'var(--color-code-bg)',
+                borderColor: 'var(--color-border)',
+                willChange: 'transform',
+              }}
             >
-              <div 
+              <div
                 className={`transition-transform duration-200 group-hover:scale-110 ${tech.isCenter ? 'w-8 h-8' : 'w-6 h-6'}`}
                 style={{ color: tech.color }}
               >
@@ -485,7 +490,10 @@ function IconCloud() {
               </div>
 
               {/* Tooltip */}
-              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#161b22] border border-white/10 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+              <div
+                className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
+                style={{ backgroundColor: 'var(--color-code-header)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)' }}
+              >
                 {tech.name}
               </div>
             </div>
@@ -496,32 +504,41 @@ function IconCloud() {
   );
 }
 
-export default function Skills() {
+export interface SkillsProps {
+  heading?: string;
+  subheading?: string;
+}
+
+export default function Skills({ heading, subheading }: SkillsProps) {
   return (
     <section id="skills" className="py-[35px] md:py-[60px] overflow-hidden">
       <div className="container mx-auto">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-8 md:mb-12"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-secondary/50 border border-white/10 mb-6">
-            <span className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-300">My Tech Stack</span>
-          </span>
-
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-            Skills & <span className="gradient-text">Technologies</span>
-          </h2>
-
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-            A comprehensive toolkit of modern technologies I use to build
-            exceptional digital experiences
-          </p>
-        </motion.div>
+        <AnimatedSectionHeading
+          badge="My Tech Stack"
+          heading={
+            heading ? (
+              heading.includes("Technologies") ? (
+                <>
+                  {heading.split("Technologies")[0]}
+                  <span className="gradient-text">Technologies</span>
+                  {heading.split("Technologies")[1]}
+                </>
+              ) : (
+                (() => {
+                  const words = heading.split(' ');
+                  const lastWord = words.pop();
+                  return <>{words.join(' ')} <span className="gradient-text">{lastWord}</span></>;
+                })()
+              )
+            ) : (
+              <>
+                Skills & <span className="gradient-text">Technologies</span>
+              </>
+            )
+          }
+          subheading={subheading || "A comprehensive toolkit of modern technologies I use to build exceptional digital experiences"}
+        />
 
         {/* Icon Cloud */}
         <motion.div
@@ -657,15 +674,15 @@ function SkillsGrid() {
 }
 
 // Skill Card with Mouse Hover Spotlight Effect
-function SkillCard({ 
-  category, 
-  index 
-}: { 
+function SkillCard({
+  category,
+  index
+}: {
   category: {
     icon: React.ReactElement;
     title: string;
     skills: Array<{ name: string; color: string }>;
-  }; 
+  };
   index: number;
 }) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -694,15 +711,15 @@ function SkillCard({
       className="group relative p-6 rounded-xl border border-transparent overflow-hidden"
       style={{
         background: isHovering
-          ? `radial-gradient(circle 200px at ${mousePosition.x}px ${mousePosition.y}px, rgba(6, 182, 212, 0.12), transparent), #0d1117`
-          : '#0d1117',
+          ? `radial-gradient(circle 200px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-bg-intensity)), transparent), var(--color-card-surface)`
+          : 'var(--color-card-surface)',
       }}
     >
       {/* Animated border glow that follows mouse */}
       <div
         className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300"
         style={{
-          background: `radial-gradient(circle 150px at ${mousePosition.x}px ${mousePosition.y}px, rgba(6, 182, 212, 0.7), transparent)`,
+          background: `radial-gradient(circle 150px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-accent-intensity)), transparent)`,
           opacity: isHovering ? 1 : 0,
           mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
           WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -721,7 +738,7 @@ function SkillCard({
           <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
             {category.icon}
           </div>
-          <h3 className="text-lg font-semibold text-white">{category.title}</h3>
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-heading)' }}>{category.title}</h3>
         </div>
 
         {/* Skills List */}
@@ -734,7 +751,7 @@ function SkillCard({
               <div className="w-4 h-4 flex-shrink-0" style={{ color: skill.color }}>
                 <IconByName name={skill.name} color={skill.color} />
               </div>
-              <span className="text-sm text-gray-300 group-hover/item:text-white transition-colors">
+              <span className="text-sm transition-colors" style={{ color: 'var(--color-text-secondary)' }}>
                 {skill.name}
               </span>
             </div>

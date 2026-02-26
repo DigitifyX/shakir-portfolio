@@ -32,3 +32,65 @@ export const postQuery = defineQuery(`
     ${postFields}
   }
 `);
+
+// ── Portfolio queries ───────────────────────────────────
+
+export const projectsQuery = defineQuery(`
+  *[_type == "project"] | order(_createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    description,
+    category,
+    link,
+    technologies,
+    gradient,
+    coverImage,
+  }
+`);
+
+export const testimonialsQuery = defineQuery(`
+  *[_type == "testimonial"] | order(order asc, _createdAt asc) {
+    _id,
+    name,
+    role,
+    company,
+    text,
+    rating,
+    accentColor,
+  }
+`);
+
+export const profileQuery = defineQuery(`
+  *[_type == "profile"][0] {
+    name,
+    title,
+    email,
+    phone,
+    location,
+    githubUrl,
+    linkedinUrl,
+    twitterUrl,
+    resumeUrl,
+    availableForWork,
+    profileImage,
+  }
+`);
+
+export const pageContentQuery = defineQuery(`
+  *[_type == "pageContent"][0] {
+    heroBadge,
+    heroHeading,
+    heroSubheading,
+    aboutHeading,
+    aboutText,
+    skillsHeading,
+    skillsSubheading,
+    projectsHeading,
+    projectsSubheading,
+    testimonialsHeading,
+    testimonialsSubheading,
+    contactHeading,
+    contactSubheading
+  }
+`);

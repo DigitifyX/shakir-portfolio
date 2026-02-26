@@ -1,6 +1,8 @@
 import "../globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Inter, Fira_Code, Great_Vibes } from "next/font/google";
+import ThemeProvider from "@/app/components/ThemeProvider";
+import SmoothScroll from "@/app/components/SmoothScroll";
 
 /* ============================================
    🔤 FONT CONFIGURATION
@@ -39,9 +41,30 @@ export default function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${firaCode.variable} ${greatVibes.variable}`}>
-      <body className="bg-dark text-white antialiased">
-        {children}
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${firaCode.variable} ${greatVibes.variable}`}>
+      <head>
+        {/* Set theme before React hydrates to prevent flash + hydration mismatch */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'light' || theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', theme);
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body suppressHydrationWarning className="antialiased">
+        <ThemeProvider>
+          <SmoothScroll>
+            {children}
+          </SmoothScroll>
+        </ThemeProvider>
         <SpeedInsights />
       </body>
     </html>

@@ -20,16 +20,18 @@ const starPositions = [
 
 // Sparkle star component with smooth continuous animation
 function SparkleStars() {
-  const [stars, setStars] = useState<{ id: number; posIndex: number; starNum: number }[]>([]);
+  const [stars, setStars] = useState<{ id: string; posIndex: number; starNum: number }[]>([]);
+  const starIdRef = useRef(0);
 
   useEffect(() => {
-    let starId = 0;
+    const prefix = Date.now().toString(36);
 
     const addStar = () => {
       const posIndex = Math.floor(Math.random() * starPositions.length);
       const starNum = Math.floor(Math.random() * 4) + 1;
-      const newStar = { id: starId++, posIndex, starNum };
-      
+      const id = `${prefix}-${starIdRef.current++}`;
+      const newStar = { id, posIndex, starNum };
+
       setStars((prev) => [...prev, newStar]);
 
       // Remove star after animation completes
@@ -67,8 +69,8 @@ function SparkleStars() {
               initial={{ opacity: 0, scale: 0, rotate: -30 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               exit={{ opacity: 0, scale: 0, rotate: 30 }}
-              transition={{ 
-                duration: 0.5, 
+              transition={{
+                duration: 0.5,
                 ease: [0.4, 0, 0.2, 1],
               }}
               className="absolute"
@@ -117,23 +119,23 @@ function CodeEditor() {
       transition={{ duration: 0.7, delay: 0.3 }}
       className="relative w-full max-w-[500px] lg:max-w-[480px] xl:max-w-[520px] mx-auto lg:mx-0"
     >
-      <div 
+      <div
         ref={editorRef}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         className="relative rounded-xl overflow-hidden border border-transparent"
         style={{
-          background: isHovering 
-            ? `radial-gradient(circle 250px at ${mousePosition.x}px ${mousePosition.y}px, rgba(6, 182, 212, 0.12), transparent), #0d1117`
-            : '#0d1117',
+          background: isHovering
+            ? `radial-gradient(circle 250px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-bg-intensity)), transparent), var(--color-code-bg)`
+            : 'var(--color-code-bg)',
         }}
       >
         {/* Animated border glow that follows mouse */}
-        <div 
+        <div
           className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300"
           style={{
-            background: `radial-gradient(circle 200px at ${mousePosition.x}px ${mousePosition.y}px, rgba(6, 182, 212, 0.7), transparent)`,
+            background: `radial-gradient(circle 200px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-accent-intensity)), transparent)`,
             opacity: isHovering ? 1 : 0,
             mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -146,7 +148,7 @@ function CodeEditor() {
         <div className="absolute inset-0 rounded-xl border border-cyan-500/20 pointer-events-none" />
 
         {/* Window Header */}
-        <div className="relative z-10 flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-[#161b22]">
+        <div className="relative z-10 flex items-center gap-2 px-4 py-3 border-b border-white/10" style={{ background: 'var(--color-code-header)' }}>
           <div className="flex gap-2">
             <span className="w-3 h-3 rounded-full bg-red-500" />
             <span className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -237,7 +239,13 @@ function CodeEditor() {
   );
 }
 
-export default function Hero() {
+export interface HeroProps {
+  badge?: string;
+  heading?: string;
+  subheading?: string;
+}
+
+export default function Hero({ badge, heading, subheading }: HeroProps) {
   // Vertical falling lights - positioned on vertical grid lines (every 80px)
   const verticalLights = [
     { left: 80, duration: '5s', delay: '0s' },
@@ -276,7 +284,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom Fade Gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-dark to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[var(--color-bg-primary)] to-transparent pointer-events-none z-10" />
 
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -290,7 +298,9 @@ export default function Hero() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-secondary/50 border border-white/10 mb-4 md:mb-6"
             >
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-xs md:text-sm text-gray-300">Welcome to my universe</span>
+              <span className="text-xs md:text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                {badge || "Welcome to my universe"}
+              </span>
             </motion.div>
 
             {/* Main Heading */}
@@ -301,13 +311,25 @@ export default function Hero() {
             >
               {/* Hello with sparkle stars */}
               <div className="relative inline-block">
-                <h1 className="hero-heading font-bold mb-1 md:mb-2">
+                <h1 className="hero-heading font-bold mb-1 md:mb-2" style={{ color: 'var(--color-text-heading)' }}>
                   Hello
                 </h1>
                 <SparkleStars />
               </div>
-              <h1 className="hero-heading font-bold whitespace-nowrap">
-                I&apos;m <span className="gradient-text">Shakir Ahmed</span>
+              <h1 className="hero-heading font-bold whitespace-nowrap" style={{ color: 'var(--color-text-heading)' }}>
+                {heading ? (
+                  heading.includes("Shakir Ahmed") ? (
+                    <>
+                      {heading.split("Shakir Ahmed")[0]}
+                      <span className="gradient-text ml-2">Shakir Ahmed</span>
+                      {heading.split("Shakir Ahmed")[1]}
+                    </>
+                  ) : (
+                    <span className="gradient-text">{heading}</span>
+                  )
+                ) : (
+                  <>I&apos;m <span className="gradient-text">Shakir Ahmed</span></>
+                )}
               </h1>
             </motion.div>
 
@@ -328,10 +350,10 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="mt-4 md:mt-5 text-gray-400 text-sm md:text-base max-w-md"
+              className="mt-4 md:mt-5 text-sm md:text-base max-w-md"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
-              JavaScript lover 🚀 | React & Next.js enthusiast 🔧 | Crafting 
-              beautiful web experiences and coding the future 💻 ✨
+              {subheading || "JavaScript lover 🚀 | React & Next.js enthusiast 🔧 | Crafting beautiful web experiences and coding the future 💻 ✨"}
             </motion.p>
 
             {/* Buttons */}
@@ -341,17 +363,37 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.6 }}
               className="mt-6 md:mt-8 flex flex-wrap gap-4"
             >
+              {/* Primary — gradient fill (matches Contact form button) */}
               <a
                 href="#projects"
-                className="px-6 py-2.5 md:py-3 rounded-lg bg-accent-blue hover:bg-blue-600 text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25"
+                className="group relative px-7 py-3 rounded-xl font-semibold text-sm text-white overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(var(--glow-accent-rgb),var(--glow-bg-intensity))]"
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+                }}
               >
-                Learn More
+                <span className="relative z-10">Learn More</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </a>
+
+              {/* Secondary — gradient border */}
               <a
                 href="#contact"
-                className="px-6 py-2.5 md:py-3 rounded-lg border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-all duration-300"
+                className="group relative px-7 py-3 rounded-xl font-semibold text-sm overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--glow-accent-rgb),0.08)]"
+                style={{ color: 'var(--color-text-primary)' }}
               >
-                Get Resume
+                {/* Gradient border via pseudo background */}
+                <span
+                  className="absolute inset-0 rounded-xl"
+                  style={{
+                    padding: '2px',
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                  }}
+                />
+                <span className="relative z-10">Get Resume</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </a>
             </motion.div>
           </div>

@@ -17,12 +17,12 @@ const config: Config = {
       '3xl': '1920px',
     },
     extend: {
-      /* Colors */
+      /* Colors — use CSS variables so they respond to theme changes */
       colors: {
         dark: {
-          DEFAULT: "#0a0a0f",
-          secondary: "#12121a",
-          tertiary: "#1a1a24",
+          DEFAULT: "var(--color-bg-primary)",
+          secondary: "var(--color-bg-secondary)",
+          tertiary: "var(--color-bg-tertiary)",
         },
         accent: {
           blue: "#3b82f6",

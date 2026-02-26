@@ -13,6 +13,8 @@ import {
 } from "sanity/presentation";
 import { structureTool } from "sanity/structure";
 import project from "@/sanity/schemas/documents/project";
+import testimonial from "@/sanity/schemas/documents/testimonial";
+import contactSubmission from "@/sanity/schemas/documents/contactSubmission";
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
@@ -20,6 +22,8 @@ import { assistWithPresets } from "@/sanity/plugins/assist";
 import author from "@/sanity/schemas/documents/author";
 import post from "@/sanity/schemas/documents/post";
 import settings from "@/sanity/schemas/singletons/settings";
+import profile from "@/sanity/schemas/singletons/profile";
+import pageContent from "@/sanity/schemas/singletons/pageContent";
 import { resolveHref } from "@/sanity/lib/utils";
 
 const homeLocation = {
@@ -35,10 +39,14 @@ export default defineConfig({
     types: [
       // Singletons
       settings,
+      profile,
+      pageContent,
       // Documents
       post,
       author,
       project,
+      testimonial,
+      contactSubmission,
     ],
   },
   plugins: [
@@ -75,9 +83,9 @@ export default defineConfig({
       },
       previewUrl: { previewMode: { enable: "/api/draft-mode/enable" } },
     }),
-    structureTool({ structure: pageStructure([settings]) }),
+    structureTool({ structure: pageStructure([settings, profile, pageContent]) }),
     // Configures the global "new document" button, and document actions, to suit the Settings document singleton
-    singletonPlugin([settings.name]),
+    singletonPlugin([settings.name, profile.name, pageContent.name]),
     // Add an image asset source for Unsplash
     unsplashImageAsset(),
     // Sets up AI Assist with preset prompts
@@ -86,6 +94,6 @@ export default defineConfig({
     // Vision lets you query your content with GROQ in the studio
     // https://www.sanity.io/docs/the-vision-plugin
     process.env.NODE_ENV === "development" &&
-      visionTool({ defaultApiVersion: apiVersion }),
+    visionTool({ defaultApiVersion: apiVersion }),
   ].filter(Boolean) as PluginOptions[],
 });
