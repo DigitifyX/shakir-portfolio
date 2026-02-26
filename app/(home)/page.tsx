@@ -43,35 +43,35 @@ export default async function HomePage() {
 
       {/* About Section */}
       <About
-        heading={pageContent?.aboutHeading}
-        content={pageContent?.aboutText}
+        heading={pageContent?.aboutHeading ?? undefined}
+        content={pageContent?.aboutText ?? undefined}
       />
 
       {/* Skills Section */}
       <Skills
-        heading={pageContent?.skillsHeading}
-        subheading={pageContent?.skillsSubheading}
+        heading={pageContent?.skillsHeading ?? undefined}
+        subheading={pageContent?.skillsSubheading ?? undefined}
       />
 
       {/* Projects Section */}
       <Projects
         projects={projects}
-        heading={pageContent?.projectsHeading}
-        subheading={pageContent?.projectsSubheading}
+        heading={pageContent?.projectsHeading ?? undefined}
+        subheading={pageContent?.projectsSubheading ?? undefined}
       />
 
       {/* Testimonials Section */}
       <Testimonials
         testimonials={testimonials}
-        heading={pageContent?.testimonialsHeading}
-        subheading={pageContent?.testimonialsSubheading}
+        heading={pageContent?.testimonialsHeading ?? undefined}
+        subheading={pageContent?.testimonialsSubheading ?? undefined}
       />
 
       {/* Contact Section */}
       <Contact
         profile={profile}
-        heading={pageContent?.contactHeading}
-        subheading={pageContent?.contactSubheading}
+        heading={pageContent?.contactHeading ?? undefined}
+        subheading={pageContent?.contactSubheading ?? undefined}
       />
 
       {/* Footer */}
