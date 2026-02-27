@@ -1,5 +1,6 @@
 import "../globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import { Inter, Fira_Code } from "next/font/google";
 
 /* ============================================
@@ -28,6 +29,7 @@ export default function BlogLayout({
       <body className="bg-dark text-white antialiased">
         <main>{children}</main>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

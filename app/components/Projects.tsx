@@ -334,29 +334,24 @@ export default function Projects({ projects, heading, subheading }: ProjectsProp
       ? allProjects
       : allProjects.filter((project) => project.category === activeFilter);
 
-  // Filter projects based on active filter
+  // Animate entire tab bar on scroll
   useEffect(() => {
     if (!tabsRef.current) return;
 
-    const buttons = tabsRef.current.querySelectorAll("button");
     gsap.fromTo(
-      buttons,
+      tabsRef.current,
       {
         opacity: 0,
-        y: 20,
-        scale: 0.9,
+        y: 24,
       },
       {
         opacity: 1,
         y: 0,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        delay: 0.3,
-        ease: "back.out(1.7)",
+        duration: 0.7,
+        ease: "power3.out",
         scrollTrigger: {
           trigger: tabsRef.current,
-          start: "top 85%",
+          start: "top 90%",
           toggleActions: "play none none none",
         },
       }
@@ -397,22 +392,20 @@ export default function Projects({ projects, heading, subheading }: ProjectsProp
     // Set initial state
     gsap.set(cards, {
       opacity: 0,
-      y: 60,
-      scale: 0.9,
-      rotationX: -15,
+      y: 40,
+      scale: 0.97,
     });
 
-    // Animate in with beautiful entrance
+    // Animate in with smooth entrance
     const tl = gsap.timeline();
     tl.to(cards, {
       opacity: 1,
       y: 0,
       scale: 1,
-      rotationX: 0,
-      duration: 0.8,
-      stagger: 0.1,
-      delay: 0.2,
-      ease: "back.out(1.7)",
+      duration: 0.5,
+      stagger: 0.08,
+      delay: 0.1,
+      ease: "power2.out",
     });
 
     return () => {
@@ -467,23 +460,25 @@ export default function Projects({ projects, heading, subheading }: ProjectsProp
             subheading={subheading || undefined}
           />
 
-          {/* Filter Buttons - Center Aligned */}
-          <div ref={tabsRef} className="inline-flex flex-wrap gap-2 justify-center p-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)] mb-8 md:mb-12">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                ref={(el) => {
-                  buttonRefs.current[category.id] = el;
-                }}
-                onClick={() => handleFilterChange(category.id)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeFilter === category.id
-                  ? 'bg-[var(--color-text-heading)] text-[var(--color-bg-primary)] shadow-md'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] hover:bg-[var(--color-bg-primary)]'
-                  }`}
-              >
-                {category.label}
-              </button>
-            ))}
+          {/* Filter Buttons - Scrollable on mobile, centered on desktop */}
+          <div ref={tabsRef} className="w-full flex justify-center mb-8 md:mb-12">
+            <div className="flex gap-1.5 overflow-x-auto no-scrollbar p-1.5 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border)] max-w-full">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  ref={(el) => {
+                    buttonRefs.current[category.id] = el;
+                  }}
+                  onClick={() => handleFilterChange(category.id)}
+                  className={`px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-all duration-300 ${activeFilter === category.id
+                    ? 'bg-[var(--color-text-heading)] text-[var(--color-bg-primary)] shadow-md'
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] hover:bg-[var(--color-bg-primary)]'
+                    }`}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
