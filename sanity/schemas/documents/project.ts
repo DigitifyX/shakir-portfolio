@@ -20,6 +20,12 @@ export default defineType({
       },
     }),
     defineField({
+      name: 'subtitle',
+      title: 'Subtitle / Client Name',
+      type: 'string',
+      description: 'E.g. AutoLux Detailing (Concept)',
+    }),
+    defineField({
       name: 'coverImage',
       title: 'Cover Image',
       type: 'image',
@@ -28,9 +34,24 @@ export default defineType({
       },
     }),
     defineField({
+      name: 'landscapeImage',
+      title: 'Landscape Project Image',
+      type: 'image',
+      description: 'Used in the Quick View popup. Horizontal image of the project (replaces the cover image here).',
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
       name: 'link',
       title: 'Project URL',
       type: 'url',
+    }),
+    defineField({
+      name: 'githubUrl',
+      title: 'GitHub Repository URL',
+      type: 'url',
+      description: 'Link to the source code repository',
     }),
     defineField({
       name: 'description',
@@ -43,6 +64,38 @@ export default defineType({
       type: 'array',
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
+    }),
+    defineField({
+      name: 'callToAction',
+      title: 'Call to Action Button Text',
+      type: 'string',
+      description: 'E.g. View Case Study',
+      initialValue: 'View Details',
+    }),
+    defineField({
+      name: 'challenge',
+      title: 'The Challenge',
+      type: 'text',
+      description: 'Detailed explanation of the problem for the Quick View.',
+    }),
+    defineField({
+      name: 'solution',
+      title: 'The Solution',
+      type: 'text',
+      description: 'Detailed explanation of how you solved it for the Quick View.',
+    }),
+    defineField({
+      name: 'features',
+      title: 'Key Features / Highlights',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Project Gallery Images',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+      description: 'Additional images for the Quick View modal.',
     }),
     defineField({
       name: 'gradient',
@@ -65,14 +118,7 @@ export default defineType({
       name: 'category',
       title: 'Category',
       type: 'string',
-      options: {
-        list: [
-          { title: 'Web', value: 'web' },
-          { title: 'Mobile', value: 'mobile' },
-          { title: 'UI/UX', value: 'uiux' },
-          { title: 'Multimedia', value: 'multimedia' },
-        ],
-      },
+      description: 'E.g. Web, Mobile, UI/UX (Used to auto-generate filter tabs)',
     }),
   ],
 })

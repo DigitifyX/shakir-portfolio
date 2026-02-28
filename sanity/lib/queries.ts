@@ -39,13 +39,21 @@ export const projectsQuery = defineQuery(`
   *[_type == "project"] | order(_createdAt desc) {
     _id,
     title,
+    subtitle,
     "slug": slug.current,
     description,
     category,
     link,
+    githubUrl,
     technologies,
+    callToAction,
+    challenge,
+    solution,
+    features,
+    gallery,
     gradient,
     coverImage,
+    landscapeImage,
   }
 `);
 

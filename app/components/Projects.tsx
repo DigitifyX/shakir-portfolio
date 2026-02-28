@@ -6,6 +6,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AnimatedSectionHeading from "./AnimatedSectionHeading";
+import { urlForImage } from "@/sanity/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,31 +14,28 @@ gsap.registerPlugin(ScrollTrigger);
 export type ProjectItem = {
   _id: string;
   title: string | null;
+  subtitle?: string | null;
   slug: string | null;
   description: string | null;
   category: string | null;
   link: string | null;
+  githubUrl?: string | null;
   technologies: string[] | null;
+  callToAction?: string | null;
+  challenge?: string | null;
+  solution?: string | null;
+  features?: string[] | null;
+  gallery?: any[] | null;
   gradient: string | null;
   coverImage: any;
+  landscapeImage?: any;
 };
 
 // Placeholder project data — used when no Sanity data exists
 const fallbackProjects: ProjectItem[] = [
-  { _id: "1", title: "BadhonAI Portfolio", slug: null, category: "web", description: "Personal portfolio website focused on speed, clarity and simple UX.", gradient: "from-purple-600 to-blue-900", link: "#", technologies: ["React", "Next.js", "TypeScript", "Tailwind CSS"], coverImage: null },
-  { _id: "2", title: "Dashboard Concept", slug: null, category: "uiux", description: "Clean analytics dashboard designed with Figma for SaaS style products.", gradient: "from-pink-500 to-orange-500", link: "#", technologies: ["Figma", "UI/UX Design", "Prototyping"], coverImage: null },
-  { _id: "3", title: "Learning App UI", slug: null, category: "mobile", description: "Mobile app screens for a simple learning / course experience.", gradient: "from-blue-400 to-cyan-500", link: "#", technologies: ["React Native", "Flutter", "UI Design"], coverImage: null },
-  { _id: "4", title: "Landing Page", slug: null, category: "web", description: "Clean landing page designed for modern SaaS / product launches.", gradient: "from-green-500 to-emerald-400", link: "#", technologies: ["Next.js", "React", "Framer Motion"], coverImage: null },
-  { _id: "5", title: "Edit & Motion", slug: null, category: "multimedia", description: "Short form edits and motion work for social platforms.", gradient: "from-orange-500 to-pink-500", link: "#", technologies: ["After Effects", "Premiere Pro", "Motion Graphics"], coverImage: null },
-  { _id: "6", title: "Mini Product UI", slug: null, category: "uiux", description: "Small product UI explorations for practicing new ideas.", gradient: "from-blue-300 to-pink-300", link: "#", technologies: ["Figma", "Design System", "UI Components"], coverImage: null },
-];
-
-const categories = [
-  { id: "all", label: "All" },
-  { id: "web", label: "Web" },
-  { id: "mobile", label: "Mobile" },
-  { id: "uiux", label: "UI/UX" },
-  { id: "multimedia", label: "Multimedia" },
+  { _id: "1", title: "Smart Booking System", subtitle: "AutoLux Detailing (Concept)", slug: null, category: "Web App", description: "A multi-step, interactive booking system that captures partial leads.", gradient: "from-purple-600 to-blue-900", link: "#", githubUrl: "#", technologies: ["React", "Zustand", "Tailwind", "Webhooks"], callToAction: "View Case Study", coverImage: null },
+  { _id: "2", title: "Analytics Dashboard", subtitle: "SaaS Platform Concept", slug: null, category: "UI/UX", description: "Clean analytics dashboard designed with Figma for SaaS style products.", gradient: "from-pink-500 to-orange-500", link: "#", technologies: ["Figma", "Design System"], callToAction: "View Mockups", coverImage: null },
+  { _id: "3", title: "Learning App UI", subtitle: "Mobile EdTech Concept", slug: null, category: "Mobile", description: "Mobile app screens for a simple learning / course experience.", gradient: "from-blue-400 to-cyan-500", link: "#", technologies: ["React Native", "Expo"], callToAction: "See Details", coverImage: null },
 ];
 
 // UI Mockup Placeholder Component
@@ -54,11 +52,11 @@ function UIMockup() {
 
         {/* Content lines */}
         <div className="space-y-2">
-          <div className="h-2 bg-white/20 rounded w-3/4" />
-          <div className="h-2 bg-white/20 rounded w-full" />
-          <div className="h-2 bg-white/20 rounded w-5/6" />
-          <div className="h-2 bg-white/20 rounded w-4/5 mt-3" />
-          <div className="h-2 bg-white/20 rounded w-full" />
+          <div className="h-2 bg-black/20 dark:bg-white/20 rounded w-3/4" />
+          <div className="h-2 bg-black/20 dark:bg-white/20 rounded w-full" />
+          <div className="h-2 bg-black/20 dark:bg-white/20 rounded w-5/6" />
+          <div className="h-2 bg-black/20 dark:bg-white/20 rounded w-4/5 mt-3" />
+          <div className="h-2 bg-black/20 dark:bg-white/20 rounded w-full" />
         </div>
       </div>
     </div>
@@ -78,42 +76,198 @@ function QuickViewPopup({
   if (!isOpen || !project) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pb-20 md:pb-6">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-md"
         onClick={onClose}
       />
 
       {/* Popup Content */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative bg-[var(--color-card-surface)] border border-cyan-500/20 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="relative bg-[var(--color-bg-primary)] w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] rounded-2xl border border-[var(--color-border)] overflow-hidden flex flex-col md:flex-row shadow-2xl"
         style={{
-          boxShadow: "0 20px 60px rgba(var(--glow-accent-rgb), 0.3)",
+          boxShadow: "0 25px 50px -12px rgba(var(--glow-accent-rgb), 0.25)",
         }}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          className="absolute top-4 right-4 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-md border border-white/10 transition-colors"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        {/* Content */}
-        <div className="p-6">
-          <h3 className="text-2xl font-bold text-white mb-4">{project.title}</h3>
-          <p className="text-gray-300 mb-6">{project.description}</p>
+        {/* Left Column - Visuals (Gradient + Cover Mockup + Gallery) */}
+        <div className={`w-full md:w-5/12 lg:w-1/2 relative flex flex-col min-h-[300px] shrink-0 bg-gradient-to-br ${project.gradient || "from-gray-800 to-gray-900"} overflow-hidden`}>
+          {/* Main Visual Area */}
+          <div className="flex-grow flex items-center justify-center p-8 relative">
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="relative w-full h-full flex items-center justify-center z-10">
+              {project.landscapeImage ? (
+                <div className="relative w-full h-full min-h-[250px] md:h-full">
+                  <Image
+                    src={urlForImage(project.landscapeImage)?.url() as string}
+                    alt={project.title || "Project Landscape"}
+                    fill
+                    className="object-contain md:object-cover drop-shadow-2xl"
+                  />
+                </div>
+              ) : project.coverImage ? (
+                <div className="relative w-full h-full min-h-[250px] md:h-full">
+                  <Image
+                    src={urlForImage(project.coverImage)?.url() as string}
+                    alt={project.title || "Project Cover"}
+                    fill
+                    className="object-contain md:object-cover drop-shadow-2xl"
+                  />
+                </div>
+              ) : (
+                <div className="transform scale-110 md:scale-125">
+                  <UIMockup />
+                </div>
+              )}
+            </div>
+          </div>
 
-          {/* Placeholder for future quick view content */}
-          <div className="bg-white/5 rounded-lg p-8 text-center text-gray-400">
-            <p>Quick View Content</p>
-            <p className="text-sm mt-2">Full project details will be designed here</p>
+          {/* Optional: Future Gallery Thumbnails Row */}
+          {project.gallery && project.gallery.length > 0 && (
+            <div className="h-24 bg-black/40 backdrop-blur-md border-t border-white/10 flex gap-2 p-3 overflow-x-auto no-scrollbar relative z-10">
+              {project.gallery.map((img, i) => (
+                <div key={i} className="flex-shrink-0 w-24 h-full bg-white/5 rounded border border-white/10">
+                  {/* Image Thumbnail Placeholder */}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Column - Project Details */}
+        <div className="w-full md:w-7/12 lg:w-1/2 flex flex-col bg-[var(--color-bg-primary)] overflow-y-auto p-6 md:p-8 lg:p-12 min-h-0 relative">
+          <div className="flex-1 flex flex-col">
+
+            {/* Header section */}
+            <div className="mb-8">
+              {project.subtitle && (
+                <div className="text-sm font-semibold text-cyan-500 dark:text-cyan-400 uppercase tracking-wider mb-2">
+                  {project.subtitle}
+                </div>
+              )}
+              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] mb-4">
+                {project.title}
+              </h2>
+              <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
+                {project.description}
+              </p>
+            </div>
+
+            {/* Tech Stack */}
+            {project.technologies && project.technologies.length > 0 && (
+              <div className="mb-8">
+                <h4 className="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-3">Technologies Used</h4>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1.5 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Challenge & Solution Grid */}
+            {(project.challenge || project.solution) && (
+              <div className="grid grid-cols-1 gap-6 mb-8">
+                {project.challenge && (
+                  <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10">
+                    <h4 className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold mb-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      The Challenge
+                    </h4>
+                    <p className="text-sm text-gray-700 dark:text-gray-400 leading-relaxed">{project.challenge}</p>
+                  </div>
+                )}
+                {project.solution && (
+                  <div className="p-5 rounded-2xl bg-green-50 dark:bg-green-500/5 border border-green-200 dark:border-green-500/10">
+                    <h4 className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold mb-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      The Solution
+                    </h4>
+                    <p className="text-sm text-gray-700 dark:text-gray-400 leading-relaxed">{project.solution}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Key Features List */}
+            {project.features && project.features.length > 0 && (
+              <div className="mb-8">
+                <h4 className="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-4">Key Features</h4>
+                <ul className="space-y-3">
+                  {project.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-sm text-[var(--color-text-primary)]">
+                      <svg className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span className="leading-relaxed">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* CTA Buttons - Matching Card Style */}
+            <div className="mt-auto pt-6 border-t border-[var(--color-border)] flex items-center gap-3">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl px-4 py-2 transition-all duration-300 pointer-events-none opacity-80"
+              >
+                Details
+              </button>
+
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 border border-cyan-200 dark:border-cyan-500/20 rounded-xl px-4 py-2 transition-all duration-300"
+                >
+                  {project.callToAction || "Live Site"}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              )}
+
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-9 h-9 text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-bg-hover)] rounded-xl transition-all duration-300 flex-shrink-0 relative"
+                  style={{ marginLeft: 'auto' }}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+                    <path d="M12 2C6.477 2 2 6.47 2 11.984c0 4.418 2.865 8.166 6.839 9.489.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.48C19.138 20.147 22 16.4 22 11.984 22 6.47 17.523 2 12 2z" />
+                  </svg>
+                </a>
+              )}
+            </div>
+
           </div>
         </div>
       </motion.div>
@@ -136,13 +290,6 @@ function ProjectCard({
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
 
-  const categoryLabels: Record<string, string> = {
-    web: "WEB DEVELOPMENT",
-    mobile: "MOBILE",
-    uiux: "UI/UX",
-    multimedia: "MULTIMEDIA",
-  };
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -162,7 +309,7 @@ function ProjectCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className="group relative overflow-hidden rounded-2xl cursor-pointer border border-transparent"
+      className="group relative overflow-hidden rounded-2xl cursor-pointer border border-transparent flex flex-col h-full"
       style={{
         transformStyle: "preserve-3d",
         perspective: "1000px",
@@ -187,12 +334,23 @@ function ProjectCard({
       {/* Static border */}
       <div className="absolute inset-0 rounded-2xl border border-cyan-500/20 pointer-events-none z-20" />
 
-      {/* Top Section - Gradient with UI Mockup */}
+      {/* Top Section - Gradient Background and Cover Image */}
       <div
         ref={imageRef}
-        className={`relative h-48 bg-gradient-to-br ${project.gradient} overflow-hidden transition-all duration-300 pb-2.5`}
+        className={`relative h-48 bg-gradient-to-br ${project.gradient || "from-gray-800 to-gray-900"} overflow-hidden transition-all duration-300 flex items-center justify-center`}
       >
-        <UIMockup />
+        {project.coverImage ? (
+          <div className="absolute inset-0 w-full h-full group-hover:scale-110 transition-transform duration-700">
+            <Image
+              src={urlForImage(project.coverImage)?.url() as string}
+              alt={project.title || "Project Cover"}
+              fill
+              className="object-cover object-top opacity-80 blur-[2px] group-hover:opacity-100 group-hover:blur-0 transition-all duration-500"
+            />
+          </div>
+        ) : (
+          <UIMockup />
+        )}
 
         {/* Overlay with Quick View Button and Technology Tags - Appears on card hover */}
         <div
@@ -283,7 +441,7 @@ function ProjectCard({
                   scale: 1.1,
                   y: -2,
                 }}
-                className="px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-sm text-white text-xs font-medium border border-white/20 whitespace-nowrap"
+                className="px-3 py-1.5 rounded-lg bg-black/60 dark:bg-black/60 backdrop-blur-sm text-white text-xs font-medium border border-white/20 whitespace-nowrap"
               >
                 {tech}
               </motion.span>
@@ -292,22 +450,67 @@ function ProjectCard({
         </div>
       </div>
 
-      {/* Bottom Section - Dark background with blur effect and content - Center Aligned */}
-      <div className="p-6 relative z-10 backdrop-blur-sm text-center">
-        {/* Category Label */}
-        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          {categoryLabels[project.category || ''] || (project.category || '').toUpperCase()}
-        </span>
+      {/* Bottom Section - Dark background with blur effect and content - Left Aligned */}
+      <div className="p-6 relative z-10 backdrop-blur-sm text-left flex flex-col flex-grow bg-[var(--color-bg-primary)] border-t border-[var(--color-border)] md:border-t-0 md:bg-transparent">
+        {/* Subtitle / Client */}
+        {project.subtitle && (
+          <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-1 line-clamp-1">
+            {project.subtitle}
+          </span>
+        )}
 
         {/* Title */}
-        <h3 className="text-xl font-bold text-white mt-2 mb-3 group-hover:text-cyan-400 transition-colors">
+        <h3 className="text-xl font-bold text-[var(--color-text-heading)] mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-2">
           {project.title}
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-gray-300 leading-relaxed">
+        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4 line-clamp-2 flex-grow">
           {project.description}
         </p>
+
+        {/* CTA Button placed at bottom */}
+        <div className="mt-auto flex items-center gap-3 border-t border-[var(--color-border)] pt-4 mt-4">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView(project);
+            }}
+            className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl px-4 py-2 transition-all duration-300 group-hover:border-[var(--color-border-hover)]"
+          >
+            Details
+          </button>
+
+          {project.link && (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 border border-cyan-200 dark:border-cyan-500/20 rounded-xl px-4 py-2 transition-all duration-300"
+            >
+              {project.callToAction || "Live Site"}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          )}
+
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center w-9 h-9 text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-hover)] border border-[var(--color-border)] hover:border-[var(--color-border-hover)] rounded-xl transition-all duration-300 flex-shrink-0 relative"
+              style={{ marginLeft: 'auto' }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+                <path d="M12 2C6.477 2 2 6.47 2 11.984c0 4.418 2.865 8.166 6.839 9.489.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.48C19.138 20.147 22 16.4 22 11.984 22 6.47 17.523 2 12 2z" />
+              </svg>
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -321,6 +524,13 @@ export interface ProjectsProps {
 
 export default function Projects({ projects, heading, subheading }: ProjectsProps) {
   const allProjects = projects && projects.length > 0 ? projects : fallbackProjects;
+  // Dynamically generate categories from projects
+  const uniqueCategories = Array.from(new Set(allProjects.map((p) => p.category).filter(Boolean))) as string[];
+  const categories = [
+    { id: "all", label: "All" },
+    ...uniqueCategories.map(cat => ({ id: cat, label: cat }))
+  ];
+
   const [activeFilter, setActiveFilter] = useState("all");
   const [quickViewProject, setQuickViewProject] = useState<ProjectItem | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
