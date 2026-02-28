@@ -20,79 +20,40 @@ const starPositions = [
 
 // Sparkle star component with smooth continuous animation
 function SparkleStars() {
-  const [stars, setStars] = useState<{ id: string; posIndex: number; starNum: number }[]>([]);
-  const starIdRef = useRef(0);
-
-  useEffect(() => {
-    const prefix = Date.now().toString(36);
-
-    const addStar = () => {
-      const posIndex = Math.floor(Math.random() * starPositions.length);
-      const starNum = Math.floor(Math.random() * 4) + 1;
-      const id = `${prefix}-${starIdRef.current++}`;
-      const newStar = { id, posIndex, starNum };
-
-      setStars((prev) => [...prev, newStar]);
-
-      // Remove star after animation completes
-      setTimeout(() => {
-        setStars((prev) => prev.filter((s) => s.id !== newStar.id));
-      }, 1500);
-    };
-
-    // Add stars at random intervals (100-400ms)
-    const scheduleNext = () => {
-      const delay = Math.random() * 300 + 100;
-      setTimeout(() => {
-        addStar();
-        scheduleNext();
-      }, delay);
-    };
-
-    // Start with a few stars
-    for (let i = 0; i < 4; i++) {
-      setTimeout(addStar, i * 200);
-    }
-    scheduleNext();
-
-    return () => setStars([]);
-  }, []);
-
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-visible">
-      <AnimatePresence>
-        {stars.map((star) => {
-          const pos = starPositions[star.posIndex];
-          return (
-            <motion.div
-              key={star.id}
-              initial={{ opacity: 0, scale: 0, rotate: -30 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0, rotate: 30 }}
-              transition={{
-                duration: 0.5,
-                ease: [0.4, 0, 0.2, 1],
-              }}
-              className="absolute"
-              style={{
-                top: pos.top,
-                left: pos.left,
-                right: pos.right,
-                width: pos.size,
-                height: pos.size,
-              }}
-            >
-              <Image
-                src={`/assets/icons/star${star.starNum}.svg`}
-                alt="star"
-                width={pos.size}
-                height={pos.size}
-                className="w-full h-full"
-              />
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {starPositions.map((pos, i) => (
+        <motion.div
+          key={i}
+          animate={{
+            opacity: [0, 1, 0],
+            scale: [0.3, 1, 0.3],
+            rotate: [-30, 0, 30],
+          }}
+          transition={{
+            duration: 1.5 + Math.random() * 1.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: Math.random() * 2,
+          }}
+          className="absolute"
+          style={{
+            top: pos.top,
+            left: pos.left,
+            right: pos.right,
+            width: pos.size,
+            height: pos.size,
+          }}
+        >
+          <Image
+            src={`/assets/icons/star${(i % 4) + 1}.svg`}
+            alt="star"
+            width={pos.size}
+            height={pos.size}
+            className="w-full h-full"
+          />
+        </motion.div>
+      ))}
     </div>
   );
 }

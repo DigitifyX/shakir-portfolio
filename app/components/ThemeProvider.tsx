@@ -100,25 +100,22 @@ export default function ThemeProvider({
         }, 500);
     }, [theme]);
 
-    // Prevent flash of wrong theme
-    if (!mounted) {
-        return <>{children}</>;
-    }
-
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
             {children}
             {/* Ripple container for theme transition effect */}
-            <div
-                ref={rippleContainerRef}
-                style={{
-                    position: "fixed",
-                    inset: 0,
-                    zIndex: 9999,
-                    pointerEvents: "none",
-                    overflow: "hidden",
-                }}
-            />
+            {mounted && (
+                <div
+                    ref={rippleContainerRef}
+                    style={{
+                        position: "fixed",
+                        inset: 0,
+                        zIndex: 9999,
+                        pointerEvents: "none",
+                        overflow: "hidden",
+                    }}
+                />
+            )}
         </ThemeContext.Provider>
     );
 }

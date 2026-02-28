@@ -30,7 +30,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <main>
+    <main className="w-full overflow-x-hidden">
       {/* Navigation */}
       <Navbar />
 
