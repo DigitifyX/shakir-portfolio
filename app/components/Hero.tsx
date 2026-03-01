@@ -268,7 +268,7 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
               {/* Hello with sparkle stars */}
               <div className="relative inline-block">
@@ -298,7 +298,7 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
               className="mt-5 md:mt-6"
             >
               <span className="inline-block px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
@@ -310,7 +310,7 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               className="mt-4 md:mt-5 text-sm md:text-base max-w-md"
               style={{ color: 'var(--color-text-secondary)' }}
             >
@@ -321,7 +321,7 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
               className="mt-6 md:mt-8 flex flex-wrap gap-4"
             >
               {/* Primary — gradient fill (matches Contact form button) */}
