@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "next-sanity";
+import { z } from "zod";
 
 const client = createClient({
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -9,26 +10,90 @@ const client = createClient({
     useCdn: false,
 });
 
+// Basic HTML escaping to prevent XSS without needing heavy jsdom-based sanitizers
+function escapeHTML(str: string): string {
+    return str.replace(/[&<>'"]/g, (tag) => {
+        const chars: Record<string, string> = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+        };
+        return chars[tag] || tag;
+    });
+}
+
+// Zod Schema
+const contactSchema = z.object({
+    name: z.string().min(1, "Name is required").max(50, "Name is too long"),
+    email: z.string().email("Invalid email address").max(100, "Email is too long"),
+    subject: z.string().max(100, "Subject is too long").optional(),
+    message: z.string().min(1, "Message is required").max(1000, "Message is too long"),
+    website: z.string().max(100).optional(), // Honeypot field
+});
+
+// Simple IP-based rate limiting
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 export async function POST(req: NextRequest) {
     try {
-        const body = await req.json();
-        const { name, email, subject, message } = body;
+        // --- RATE LIMITING ---
+        const ip = req.headers.get("x-forwarded-for") ?? "unknown_ip";
+        const now = Date.now();
+        const rateLimitInfo = rateLimitMap.get(ip) || { count: 0, lastReset: now };
 
-        // Validate
-        if (!name || !email || !message) {
+        if (now - rateLimitInfo.lastReset > RATE_LIMIT_WINDOW_MS) {
+            rateLimitInfo.count = 0;
+            rateLimitInfo.lastReset = now;
+        }
+
+        if (rateLimitInfo.count >= RATE_LIMIT_MAX) {
             return NextResponse.json(
-                { error: "Name, email, and message are required." },
+                { error: "Too many requests. Please try again later." },
+                { status: 429 }
+            );
+        }
+
+        rateLimitInfo.count += 1;
+        rateLimitMap.set(ip, rateLimitInfo);
+
+        // --- VALIDATION AND SANITIZATION ---
+        const body = await req.json();
+
+        // Validate structure and extract with Zod
+        const result = contactSchema.safeParse(body);
+        if (!result.success) {
+            return NextResponse.json(
+                { error: result.error.issues[0]?.message || "Invalid input" },
                 { status: 400 }
             );
         }
 
-        // Create document in Sanity
+        const { name, email, subject, message, website } = result.data;
+
+        // --- HONEYPOT ANTI-SPAM ---
+        if (website) {
+            console.log(`Bot detected via honeypot from IP: ${ip}`);
+            // Silently return success to bot without saving anything
+            return NextResponse.json({ success: true }, { status: 200 });
+        }
+
+        // --- SANITIZE PAYLOAD ---
+        const cleanName = escapeHTML(name);
+        const cleanEmail = escapeHTML(email);
+        const cleanSubject = subject ? escapeHTML(subject) : "";
+        const cleanMessage = escapeHTML(message);
+
+        // --- SAVE TO SANITY ---
         const doc = await client.create({
             _type: "contactSubmission",
-            name,
-            email,
-            subject: subject || "",
-            message,
+            name: cleanName,
+            email: cleanEmail,
+            subject: cleanSubject,
+            message: cleanMessage,
             submittedAt: new Date().toISOString(),
             read: false,
         });
@@ -38,7 +103,8 @@ export async function POST(req: NextRequest) {
             { status: 201 }
         );
     } catch (error: any) {
-        console.error("Contact form error:", error);
+        // Log to server only, do not leak details to client
+        console.error("Contact form error:", error.message || error);
         return NextResponse.json(
             { error: "Failed to submit. Please try again." },
             { status: 500 }

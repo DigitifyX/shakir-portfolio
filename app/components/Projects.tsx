@@ -76,7 +76,7 @@ function QuickViewPopup({
   if (!isOpen || !project) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pb-20 md:pb-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pt-16 pb-20 sm:p-6 md:p-6 md:pt-6">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -91,7 +91,7 @@ function QuickViewPopup({
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-[var(--color-bg-primary)] w-full max-w-5xl max-h-[90vh] md:max-h-[85vh] rounded-2xl border border-[var(--color-border)] overflow-hidden flex flex-col md:flex-row shadow-2xl"
+        className="relative bg-[var(--color-bg-primary)] w-full max-w-5xl max-h-[78vh] md:max-h-[85vh] mt-4 md:mt-0 rounded-2xl border border-[var(--color-border)] overflow-hidden flex flex-col md:flex-row shadow-2xl"
         style={{
           boxShadow: "0 25px 50px -12px rgba(var(--glow-accent-rgb), 0.25)",
         }}
@@ -99,10 +99,10 @@ function QuickViewPopup({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-md border border-white/10 transition-colors"
+          className="absolute top-3 right-3 md:top-4 md:right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/30 shadow-lg transition-all"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
@@ -419,7 +419,7 @@ function ProjectCard({
               damping: 20,
               delay: 0.2,
             }}
-            className="absolute left-4 flex flex-row gap-2 pointer-events-none"
+            className="absolute left-4 right-4 flex flex-wrap gap-2 pointer-events-none"
             style={{ bottom: '30px' }}
           >
             {project.technologies?.map((tech, idx) => (

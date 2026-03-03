@@ -188,6 +188,7 @@ function ContactForm() {
                     email: formData.get('email') as string,
                     subject: formData.get('subject') as string,
                     message: formData.get('message') as string,
+                    website: formData.get('website') as string, // Honeypot
                 };
 
                 try {
@@ -282,6 +283,18 @@ function ContactForm() {
                     />
                 </div>
 
+                {/* Honeypot Field (Hidden) */}
+                <div style={{ display: 'none' }} aria-hidden="true">
+                    <label htmlFor="website">Website</label>
+                    <input
+                        type="text"
+                        name="website"
+                        id="website"
+                        tabIndex={-1}
+                        autoComplete="off"
+                    />
+                </div>
+
                 {/* Message */}
                 <div>
                     <label className="block text-gray-400 text-xs font-medium uppercase tracking-wider mb-2">
@@ -303,10 +316,10 @@ function ContactForm() {
                     type="submit"
                     disabled={status === 'loading' || status === 'success'}
                     className={`group relative w-full py-4 rounded-xl font-semibold text-sm text-white overflow-hidden transition-all duration-500 ${status === 'success'
-                            ? 'bg-emerald-500 hover:shadow-none'
-                            : status === 'error'
-                                ? 'bg-red-500'
-                                : 'hover:shadow-[0_0_30px_rgba(var(--glow-accent-rgb),var(--glow-bg-intensity))]'
+                        ? 'bg-emerald-500 hover:shadow-none'
+                        : status === 'error'
+                            ? 'bg-red-500'
+                            : 'hover:shadow-[0_0_30px_rgba(var(--glow-accent-rgb),var(--glow-bg-intensity))]'
                         }`}
                     style={{
                         background: status === 'success'
