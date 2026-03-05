@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import AnimatedSectionHeading from "./AnimatedSectionHeading";
 
 // Technology data
@@ -14,7 +15,8 @@ const technologies = [
   { name: "HTML5", color: "#E34F26" },
   { name: "CSS3", color: "#1572B6" },
   { name: "Git", color: "#F05032" },
-  { name: "GitHub", color: "#ffffff", isCenter: true },
+  { name: "GitHub", color: "#ffffff" },
+  { name: "Shakir Ahmed", color: "transparent", isCenter: true },
   { name: "Docker", color: "#2496ED" },
   { name: "AWS", color: "#FF9900" },
   { name: "MongoDB", color: "#47A248" },
@@ -35,7 +37,7 @@ const technologies = [
   { name: "GraphQL", color: "#E10098" },
   { name: "Sass", color: "#CC6699" },
   { name: "Jest", color: "#C21325" },
-  { name: "Cypress", color: "#17202C" },
+  { name: "Cypress", color: "#ffffff" },
   { name: "Framer", color: "#0055FF" },
   { name: "Sanity", color: "#F03E2F" },
 ];
@@ -482,17 +484,29 @@ function IconCloud() {
                 willChange: 'transform',
               }}
             >
-              <div
-                className={`transition-transform duration-200 group-hover:scale-110 ${tech.isCenter ? 'w-8 h-8' : 'w-6 h-6'}`}
-                style={{ color: tech.color }}
-              >
-                <IconByName name={tech.name} color={tech.color} />
-              </div>
+              {tech.isCenter ? (
+                <div className="w-full h-full rounded-xl overflow-hidden p-[2px]">
+                  <Image
+                    src="/assets/about-image.webp"
+                    alt="Avatar"
+                    width={56}
+                    height={56}
+                    className="w-full h-full object-cover rounded-[10px] transition-transform duration-200 group-hover:scale-110"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="transition-transform duration-200 group-hover:scale-110 w-6 h-6"
+                  style={{ color: tech.color }}
+                >
+                  <IconByName name={tech.name} color={tech.color} />
+                </div>
+              )}
 
               {/* Tooltip */}
               <div
-                className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50"
-                style={{ backgroundColor: 'var(--color-code-header)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)' }}
+                className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg"
+                style={{ backgroundColor: 'var(--color-code-header)', border: '1px solid var(--color-border)', color: '#ffffff' }}
               >
                 {tech.name}
               </div>
@@ -641,7 +655,7 @@ function SkillsGrid() {
       skills: [
         { name: "VS Code", color: "#007ACC" },
         { name: "Jest", color: "#C21325" },
-        { name: "Cypress", color: "#17202C" },
+        { name: "Cypress", color: "#ffffff" },
         { name: "Redux", color: "#764ABC" },
         { name: "Firebase", color: "#FFCA28" },
         { name: "Sanity", color: "#F03E2F" },
@@ -742,16 +756,16 @@ function SkillCard({
         </div>
 
         {/* Skills List */}
-        <div className="flex flex-wrap gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {category.skills.map((skill) => (
             <div
               key={skill.name}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-secondary/50 border border-white/5 hover:border-cyan-500/30 transition-all duration-200 group/item"
+              className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-dark-secondary/50 border border-white/5 hover:border-cyan-500/30 transition-all duration-200 group/item"
             >
-              <div className="w-4 h-4 flex-shrink-0" style={{ color: skill.color }}>
+              <div className={`w-4 h-4 flex-shrink-0 ${skill.color === '#ffffff' ? 'tech-icon-white' : ''}`} style={{ color: skill.color }}>
                 <IconByName name={skill.name} color={skill.color} />
               </div>
-              <span className="text-sm transition-colors" style={{ color: 'var(--color-text-secondary)' }}>
+              <span className="text-[13px] transition-colors text-center whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>
                 {skill.name}
               </span>
             </div>

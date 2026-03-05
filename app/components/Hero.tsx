@@ -119,7 +119,7 @@ function CodeEditor() {
         </div>
 
         {/* Code Content */}
-        <div className="relative z-10 p-4 md:p-5 font-mono text-[11px] md:text-xs overflow-x-auto max-h-[280px] md:max-h-[420px] overflow-y-auto">
+        <div className="relative z-10 p-4 md:p-5 font-mono text-[11px] md:text-xs overflow-x-auto h-auto">
           <pre className="text-gray-300">
             <code>
               <span className="text-purple-400">const</span>{" "}
@@ -207,25 +207,12 @@ export interface HeroProps {
 }
 
 export default function Hero({ badge, heading, subheading }: HeroProps) {
-  // Vertical falling lights - positioned on vertical grid lines (every 80px)
-  const verticalLights = [
-    { left: 80, duration: '5s', delay: '0s' },
-    { left: 160, duration: '7s', delay: '1.5s' },
-    { left: 240, duration: '4s', delay: '3s' },
-    { left: 320, duration: '6s', delay: '0.5s' },
-    { left: 400, duration: '8s', delay: '2s' },
-    { left: 480, duration: '5.5s', delay: '4s' },
-    { left: 560, duration: '7s', delay: '1s' },
-    { left: 640, duration: '4.5s', delay: '2.5s' },
-    { left: 720, duration: '6.5s', delay: '0s' },
-    { left: 800, duration: '5s', delay: '3.5s' },
-    { left: 880, duration: '8s', delay: '1s' },
-    { left: 960, duration: '6s', delay: '2s' },
-    { left: 1040, duration: '7s', delay: '0.5s' },
-    { left: 1120, duration: '5s', delay: '4s' },
-    { left: 1200, duration: '6s', delay: '1.5s' },
-    { left: 1280, duration: '4s', delay: '3s' },
-  ];
+  // Vertical falling lights - generated algorithmically to prevent React hydration mismatch, covering up to 4000px for ultrawide displays
+  const verticalLights = Array.from({ length: 50 }).map((_, i) => ({
+    left: (i + 1) * 80, // Align exactly with the 80px CSS grid pattern background
+    duration: `${(i % 5) + 4 + (i % 3) * 0.5}s`,
+    delay: `${(i % 7) * 0.5}s`,
+  }));
 
   return (
     <section id="hero" className="relative pt-[100px] pb-[35px] md:h-[800px] md:py-0 md:pt-[164px] overflow-hidden hero-bg grid-pattern">
@@ -245,9 +232,9 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
       </div>
 
       {/* Bottom Fade Gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[var(--color-bg-primary)] to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[var(--color-bg-primary)] to-transparent pointer-events-none z-0" />
 
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Content */}
           <div className="relative z-10">

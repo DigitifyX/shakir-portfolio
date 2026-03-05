@@ -139,6 +139,11 @@
   color: var(--color-text-primary);
 }
 
+/* Force purely white icons inside the skills grid/globe to be dark in light mode */
+[data-theme="light"] .tech-icon-white svg {
+  fill: #1a1a2e;
+}
+
 /* Keep white text inside gradient/colored elements */
 [data-theme="light"] .bg-accent-blue .text-white,
 [data-theme="light"] .bg-gradient-to-r .text-white,
