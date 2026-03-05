@@ -34,8 +34,24 @@ export default function ThemeProvider({
         if (saved === "light" || saved === "dark") {
             setTheme(saved);
             document.documentElement.setAttribute("data-theme", saved);
+        } else {
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const systemTheme = prefersDark ? "dark" : "light";
+            setTheme(systemTheme);
+            document.documentElement.setAttribute("data-theme", systemTheme);
         }
         setMounted(true);
+
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const handleChange = (e: MediaQueryListEvent) => {
+            if (!localStorage.getItem("theme")) {
+                const newTheme = e.matches ? "dark" : "light";
+                setTheme(newTheme);
+                document.documentElement.setAttribute("data-theme", newTheme);
+            }
+        };
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
     }, []);
 
     const toggleTheme = useCallback((e?: React.MouseEvent) => {
