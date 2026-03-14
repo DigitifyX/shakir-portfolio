@@ -35,33 +35,50 @@ const contactSchema = z.object({
 
 // Simple IP-based rate limiting
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
-const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_MAX = 5; // Increased to 5 per hour
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 export async function POST(req: NextRequest) {
     try {
         // --- RATE LIMITING ---
-        const ip = req.headers.get("x-forwarded-for") ?? "unknown_ip";
-        const now = Date.now();
-        const rateLimitInfo = rateLimitMap.get(ip) || { count: 0, lastReset: now };
+        // Basic fallback for development and local proxies
+        const forwardedFor = req.headers.get("x-forwarded-for");
+        const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : "127.0.0.1";
+        
+        // Skip rate limiting in development mode
+        const isDev = process.env.NODE_ENV === "development";
+        
+        if (!isDev) {
+            const now = Date.now();
+            const rateLimitInfo = rateLimitMap.get(ip) || { count: 0, lastReset: now };
 
-        if (now - rateLimitInfo.lastReset > RATE_LIMIT_WINDOW_MS) {
-            rateLimitInfo.count = 0;
-            rateLimitInfo.lastReset = now;
+            if (now - rateLimitInfo.lastReset > RATE_LIMIT_WINDOW_MS) {
+                rateLimitInfo.count = 0;
+                rateLimitInfo.lastReset = now;
+            }
+
+            if (rateLimitInfo.count >= RATE_LIMIT_MAX) {
+                console.warn(`Rate limit exceeded for IP: ${ip}`);
+                return NextResponse.json(
+                    { error: "Too many requests. Please try again later." },
+                    { status: 429 }
+                );
+            }
+
+            rateLimitInfo.count += 1;
+            rateLimitMap.set(ip, rateLimitInfo);
         }
-
-        if (rateLimitInfo.count >= RATE_LIMIT_MAX) {
-            return NextResponse.json(
-                { error: "Too many requests. Please try again later." },
-                { status: 429 }
-            );
-        }
-
-        rateLimitInfo.count += 1;
-        rateLimitMap.set(ip, rateLimitInfo);
 
         // --- VALIDATION AND SANITIZATION ---
-        const body = await req.json();
+        let body;
+        try {
+            body = await req.json();
+        } catch (err) {
+            return NextResponse.json(
+                { error: "Invalid JSON body provided" },
+                { status: 400 }
+            );
+        }
 
         // Validate structure and extract with Zod
         const result = contactSchema.safeParse(body);
