@@ -75,6 +75,7 @@ export const profileQuery = defineQuery(`
     title,
     email,
     phone,
+    whatsappUrl,
     location,
     githubUrl,
     linkedinUrl,

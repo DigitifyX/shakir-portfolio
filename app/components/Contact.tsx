@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
     Mail,
     MapPin,
-    Phone,
+    MessageCircle,
     Send,
     Github,
     Linkedin,
@@ -28,6 +28,7 @@ export type ProfileData = {
     title: string | null;
     email: string | null;
     phone: string | null;
+    whatsappUrl: string | null;
     location: string | null;
     githubUrl: string | null;
     linkedinUrl: string | null;
@@ -38,6 +39,11 @@ export type ProfileData = {
 };
 
 function buildContactInfo(profile: ProfileData | null) {
+    const whatsappHref = profile?.whatsappUrl
+        || (profile?.phone
+            ? `https://wa.me/${profile.phone.replace(/[^\d]/g, "")}`
+            : "#");
+
     return [
         {
             icon: Mail,
@@ -54,10 +60,10 @@ function buildContactInfo(profile: ProfileData | null) {
             gradient: "from-purple-500 to-pink-400",
         },
         {
-            icon: Phone,
-            label: "Phone",
-            value: profile?.phone || "+880 1XXX-XXXXXX",
-            href: `tel:${profile?.phone || "+8801000000000"}`,
+            icon: MessageCircle,
+            label: "WhatsApp",
+            value: "Message on WhatsApp",
+            href: whatsappHref,
             gradient: "from-green-500 to-emerald-400",
         },
     ];
@@ -91,11 +97,14 @@ function InfoCard({
     };
 
     const Icon = item.icon;
+    const isExternalLink = item.href.startsWith("http") || item.href.startsWith("mailto:");
 
     return (
         <a
             ref={cardRef}
             href={item.href}
+            target={isExternalLink ? "_blank" : undefined}
+            rel={isExternalLink ? "noopener noreferrer" : undefined}
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}

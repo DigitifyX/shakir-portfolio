@@ -27,8 +27,15 @@ export default defineType({
         }),
         defineField({
             name: 'phone',
-            title: 'Phone',
+            title: 'WhatsApp Number',
             type: 'string',
+            description: 'Add your WhatsApp number here. You can include +, spaces, or dashes, and the site will convert it to a WhatsApp link automatically.',
+        }),
+        defineField({
+            name: 'whatsappUrl',
+            title: 'WhatsApp URL (Optional)',
+            type: 'url',
+            description: 'Optional. If you add this, it will be used instead of the WhatsApp Number field.',
         }),
         defineField({
             name: 'location',
