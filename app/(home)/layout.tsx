@@ -3,7 +3,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { Inter, Fira_Code, Great_Vibes } from "next/font/google";
 import ThemeProvider from "@/app/components/ThemeProvider";
-import SmoothScroll from "@/app/components/SmoothScroll";
 
 /* ============================================
    🔤 FONT CONFIGURATION
@@ -88,9 +87,7 @@ export default function HomeLayout({
       </head>
       <body suppressHydrationWarning className="antialiased">
         <ThemeProvider>
-          <SmoothScroll>
-            {children}
-          </SmoothScroll>
+          {children}
         </ThemeProvider>
         <SpeedInsights />
         <Analytics />
