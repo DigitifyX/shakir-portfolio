@@ -4,30 +4,23 @@
    Testimonials, Contact, Footer
    ============================================ */
 
+import dynamic from "next/dynamic";
+
 import Navbar from "@/app/components/Navbar";
 import Hero from "@/app/components/Hero";
-import About from "@/app/components/About";
-import Skills from "@/app/components/Skills";
-import Projects from "@/app/components/Projects";
-import Testimonials from "@/app/components/Testimonials";
-import Contact from "@/app/components/Contact";
-import Footer from "@/app/components/Footer";
-
 import { sanityFetch } from "@/sanity/lib/fetch";
-import {
-  projectsQuery,
-  testimonialsQuery,
-  profileQuery,
-  pageContentQuery,
-} from "@/sanity/lib/queries";
+import { homepageQuery } from "@/sanity/lib/queries";
+
+const About = dynamic(() => import("@/app/components/About"));
+const Skills = dynamic(() => import("@/app/components/Skills"));
+const Projects = dynamic(() => import("@/app/components/Projects"));
+const Testimonials = dynamic(() => import("@/app/components/Testimonials"));
+const Contact = dynamic(() => import("@/app/components/Contact"));
+const Footer = dynamic(() => import("@/app/components/Footer"));
 
 export default async function HomePage() {
-  const [projects, testimonials, profile, pageContent] = await Promise.all([
-    sanityFetch({ query: projectsQuery }),
-    sanityFetch({ query: testimonialsQuery }),
-    sanityFetch({ query: profileQuery }),
-    sanityFetch({ query: pageContentQuery }),
-  ]);
+  const homepage = await sanityFetch({ query: homepageQuery });
+  const { projects, testimonials, profile, pageContent } = homepage;
 
   return (
     <main className="w-full overflow-x-hidden">
