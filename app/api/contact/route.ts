@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
         // --- SEND EMAIL NOTIFICATION ---
         await resend.emails.send({
             from: "Portfolio Contact <noreply@shakirjoy.xyz>",
-            to: "info@shakirjoy.xyz",
+            to: ["info@shakirjoy.xyz", "portfolio@minionpri.resend.app"],
             subject: cleanSubject ? `Contact: ${cleanSubject}` : `New message from ${cleanName}`,
             html: `
                 <h2>New Contact Form Submission</h2>
