@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "next-sanity";
 import { z } from "zod";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const client = createClient({
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
@@ -113,6 +116,21 @@ export async function POST(req: NextRequest) {
             message: cleanMessage,
             submittedAt: new Date().toISOString(),
             read: false,
+        });
+
+        // --- SEND EMAIL NOTIFICATION ---
+        await resend.emails.send({
+            from: "Portfolio Contact <noreply@shakirjoy.xyz>",
+            to: "info@shakirjoy.xyz",
+            subject: cleanSubject ? `Contact: ${cleanSubject}` : `New message from ${cleanName}`,
+            html: `
+                <h2>New Contact Form Submission</h2>
+                <p><strong>Name:</strong> ${cleanName}</p>
+                <p><strong>Email:</strong> ${cleanEmail}</p>
+                <p><strong>Subject:</strong> ${cleanSubject || "—"}</p>
+                <p><strong>Message:</strong></p>
+                <p style="white-space:pre-wrap">${cleanMessage}</p>
+            `,
         });
 
         return NextResponse.json(

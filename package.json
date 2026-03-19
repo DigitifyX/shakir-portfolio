@@ -39,6 +39,7 @@
     "postcss": "^8.4.47",
     "react": "^19",
     "react-dom": "^19",
+    "resend": "^6.9.4",
     "sanity": "^3.62.0",
     "sanity-plugin-asset-source-unsplash": "^3.0.1",
     "server-only": "^0.0.1",
