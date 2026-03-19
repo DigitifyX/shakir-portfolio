@@ -6,7 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
     Github,
     Linkedin,
-    Twitter,
+    Facebook,
+    Instagram,
     Heart,
     ArrowUp,
 } from "lucide-react";
@@ -27,7 +28,8 @@ export default function Footer({ profile }: { profile: ProfileData | null }) {
     const socialLinks = [
         { icon: Github, label: "GitHub", href: profile?.githubUrl || "https://github.com/" },
         { icon: Linkedin, label: "LinkedIn", href: profile?.linkedinUrl || "https://linkedin.com/" },
-        { icon: Twitter, label: "Twitter", href: profile?.twitterUrl || "https://twitter.com/" },
+        { icon: Facebook, label: "Facebook", href: profile?.facebookUrl || "https://facebook.com/" },
+        { icon: Instagram, label: "Instagram", href: profile?.instagramUrl || "https://instagram.com/" },
     ];
 
     const footerRef = useRef<HTMLElement>(null);

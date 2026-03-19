@@ -10,7 +10,8 @@ import {
     Send,
     Github,
     Linkedin,
-    Twitter,
+    Facebook,
+    Instagram,
     ArrowUpRight,
     Sparkles,
     CheckCircle,
@@ -32,7 +33,8 @@ export type ProfileData = {
     location: string | null;
     githubUrl: string | null;
     linkedinUrl: string | null;
-    twitterUrl: string | null;
+    facebookUrl: string | null;
+    instagramUrl: string | null;
     resumeUrl: string | null;
     availableForWork: boolean | null;
     profileImage: any;
@@ -73,7 +75,8 @@ function buildSocialLinks(profile: ProfileData | null) {
     return [
         { icon: Github, label: "GitHub", href: profile?.githubUrl || "https://github.com/", gradient: "from-gray-400 to-gray-600" },
         { icon: Linkedin, label: "LinkedIn", href: profile?.linkedinUrl || "https://linkedin.com/", gradient: "from-blue-500 to-blue-700" },
-        { icon: Twitter, label: "Twitter", href: profile?.twitterUrl || "https://twitter.com/", gradient: "from-sky-400 to-blue-500" },
+        { icon: Facebook, label: "Facebook", href: profile?.facebookUrl || "https://facebook.com/", gradient: "from-blue-500 to-indigo-600" },
+        { icon: Instagram, label: "Instagram", href: profile?.instagramUrl || "https://instagram.com/", gradient: "from-pink-500 to-orange-400" },
     ];
 }
 
