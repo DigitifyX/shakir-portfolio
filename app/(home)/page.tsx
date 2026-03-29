@@ -11,12 +11,19 @@ import Hero from "@/app/components/Hero";
 import { sanityFetch } from "@/sanity/lib/fetch";
 import { homepageQuery } from "@/sanity/lib/queries";
 
+// Statically generate homepage, revalidate every hour
+// Portfolio content changes rarely - no need for dynamic rendering
+export const revalidate = 3600;
+
 const About = dynamic(() => import("@/app/components/About"));
-const Skills = dynamic(() => import("@/app/components/Skills"));
 const Projects = dynamic(() => import("@/app/components/Projects"));
-const Testimonials = dynamic(() => import("@/app/components/Testimonials"));
 const Contact = dynamic(() => import("@/app/components/Contact"));
 const Footer = dynamic(() => import("@/app/components/Footer"));
+
+// Skills and Testimonials use ssr:false (client-only rendering)
+// which requires a "use client" wrapper in Next.js 15
+import SkillsClient from "@/app/components/SkillsClient";
+import TestimonialsClient from "@/app/components/TestimonialsClient";
 
 export default async function HomePage() {
   const homepage = await sanityFetch({ query: homepageQuery });
@@ -41,7 +48,7 @@ export default async function HomePage() {
       />
 
       {/* Skills Section */}
-      <Skills
+      <SkillsClient
         heading={pageContent?.skillsHeading ?? undefined}
         subheading={pageContent?.skillsSubheading ?? undefined}
       />
@@ -54,7 +61,7 @@ export default async function HomePage() {
       />
 
       {/* Testimonials Section */}
-      <Testimonials
+      <TestimonialsClient
         testimonials={testimonials}
         heading={pageContent?.testimonialsHeading ?? undefined}
         subheading={pageContent?.testimonialsSubheading ?? undefined}

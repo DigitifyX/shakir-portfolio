@@ -37,6 +37,10 @@ const contactSchema = z.object({
 });
 
 // Simple IP-based rate limiting
+// NOTE: In-memory rate limiting does not persist across serverless cold starts.
+// For production-grade protection, consider Vercel KV, Upstash Redis, or
+// Vercel's built-in rate limiting. This provides basic protection for
+// warm function instances only.
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
 const RATE_LIMIT_MAX = 5; // Increased to 5 per hour
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour

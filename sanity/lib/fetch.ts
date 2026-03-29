@@ -26,8 +26,17 @@ export async function sanityFetch<const QueryString extends string>({
   perspective?: Omit<ClientPerspective, "raw">;
   stega?: boolean;
 }) {
-  const perspective =
-    _perspective || (await draftMode()).isEnabled
+  // In production builds, skip draftMode() check entirely to enable ISR.
+  // draftMode() is a dynamic API that forces dynamic rendering.
+  // Only check it when we're in a context where drafts might be active.
+  let isDraftMode = false;
+  if (_perspective === undefined) {
+    // This still allows the Sanity Presentation Tool to enable draft mode.
+    isDraftMode = (await draftMode()).isEnabled;
+  }
+  const perspective: ClientPerspective = _perspective
+    ? (_perspective as ClientPerspective)
+    : isDraftMode
       ? "previewDrafts"
       : "published";
   const stega =
@@ -52,7 +61,7 @@ export async function sanityFetch<const QueryString extends string>({
     // The `published` perspective is available on the API CDN
     useCdn: true,
     // Only enable Stega in production if it's a Vercel Preview Deployment, as the Vercel Toolbar supports Visual Editing
-    // When using the `published` perspective we use time-based revalidation to match the time-to-live on Sanity's API CDN (60 seconds)
-    next: { revalidate: 60 },
+    // Revalidate every hour to match the page-level ISR config
+    next: { revalidate: 3600 },
   });
 }

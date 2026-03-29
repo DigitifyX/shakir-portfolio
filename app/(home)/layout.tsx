@@ -1,20 +1,20 @@
 export const metadata = {
-  title: "Shakir Ahmed | Full-Stack Developer & Problem Solver",
+  title: "Shakir Ahmed | Web Developer & Automation Specialist",
   description:
-    "Hi, I'm Shakir Ahmed - a passionate Full-Stack Developer specializing in React, Next.js & TypeScript. I craft beautiful, high-performance web experiences that make an impact.",
-  metadataBase: new URL("https://shakir-portfolio-topaz.vercel.app"),
+    "Shakir Ahmed is a freelance web developer and automation specialist from Dhaka, Bangladesh. Specializing in WordPress, GoHighLevel, React, and Next.js - I build websites and systems that help service businesses grow.",
+  metadataBase: new URL("https://shakirjoy.xyz"),
   openGraph: {
-    title: "Shakir Ahmed | Full-Stack Developer & Problem Solver",
+    title: "Shakir Ahmed | Web Developer & Automation Specialist",
     description:
-      "Hi, I'm Shakir Ahmed - a passionate Full-Stack Developer specializing in React, Next.js & TypeScript. I craft beautiful, high-performance web experiences that make an impact.",
-    url: "https://shakir-portfolio-topaz.vercel.app",
+      "Shakir Ahmed is a freelance web developer and automation specialist from Dhaka, Bangladesh. Specializing in WordPress, GoHighLevel, React, and Next.js - I build websites and systems that help service businesses grow.",
+    url: "https://shakirjoy.xyz",
     siteName: "Shakir Ahmed - Portfolio",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Shakir Ahmed - Full-Stack Developer & Problem Solver",
+        alt: "Shakir Ahmed - Web Developer & Automation Specialist",
       },
     ],
     locale: "en_US",
@@ -22,9 +22,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shakir Ahmed | Full-Stack Developer & Problem Solver",
+    title: "Shakir Ahmed | Web Developer & Automation Specialist",
     description:
-      "Hi, I'm Shakir Ahmed - a passionate Full-Stack Developer specializing in React, Next.js & TypeScript. I craft beautiful, high-performance web experiences.",
+      "Shakir Ahmed is a freelance web developer and automation specialist from Dhaka, Bangladesh. Specializing in WordPress, GoHighLevel, React, and Next.js.",
     images: ["/og-image.png"],
   },
 };

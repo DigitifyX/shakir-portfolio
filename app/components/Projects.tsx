@@ -73,10 +73,19 @@ function QuickViewPopup({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !project) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pt-16 pb-20 sm:p-6 md:p-6 md:pt-6">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pt-16 pb-20 sm:p-6 md:p-6 md:pt-6" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -99,6 +108,7 @@ function QuickViewPopup({
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="Close project details"
           className="absolute top-3 right-3 md:top-4 md:right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/30 shadow-lg transition-all"
         >
           <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
@@ -119,6 +129,7 @@ function QuickViewPopup({
                     alt={project.title || "Project Landscape"}
                     fill
                     className="object-contain md:object-cover drop-shadow-2xl"
+                    loading="lazy"
                   />
                 </div>
               ) : project.coverImage ? (
@@ -128,6 +139,7 @@ function QuickViewPopup({
                     alt={project.title || "Project Cover"}
                     fill
                     className="object-contain md:object-cover drop-shadow-2xl"
+                    loading="lazy"
                   />
                 </div>
               ) : (
@@ -346,6 +358,7 @@ function ProjectCard({
               alt={project.title || "Project Cover"}
               fill
               className="object-cover object-top opacity-80 blur-[2px] group-hover:opacity-100 group-hover:blur-0 transition-all duration-500"
+              loading="lazy"
             />
           </div>
         ) : (
@@ -728,4 +741,3 @@ export default function Projects({ projects, heading, subheading }: ProjectsProp
     </section>
   );
 }
-//ok

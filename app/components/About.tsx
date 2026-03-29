@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { PortableText } from '@portabletext/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -74,8 +75,6 @@ function AnimatedHeading({
   );
 }
 
-
-import { PortableText } from '@portabletext/react';
 
 export interface AboutProps {
   heading?: string;
@@ -306,6 +305,7 @@ export default function About({ heading, content }: AboutProps) {
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    loading="lazy"
                   />
                 </div>
               </div>

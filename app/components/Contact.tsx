@@ -217,6 +217,7 @@ function ContactForm() {
 
                     setStatus('success');
                     formRef.current?.reset();
+                    setTimeout(() => setStatus('idle'), 5000);
                 } catch (err: any) {
                     setStatus('error');
                     setErrorMsg(err.message || 'Failed to send message');

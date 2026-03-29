@@ -44,6 +44,8 @@ function SparkleStars() {
 }
 
 function CodeEditor() {
+  const yearsOfExperience = new Date().getFullYear() - 2021;
+
   return (
     <div className="relative w-full max-w-[500px] lg:max-w-[480px] xl:max-w-[520px] mx-auto lg:mx-0 animate-hero-fade-right">
       <div
@@ -116,7 +118,7 @@ function CodeEditor() {
               <span className="text-orange-400">true</span>,
               {"\n"}
               {"  "}<span className="text-red-400">yearsOfExperience</span>:{" "}
-              <span className="text-cyan-400">4</span>,
+              <span className="text-cyan-400">{yearsOfExperience}</span>,
               {"\n"}
               {"  "}<span className="text-red-400">speciality</span>:{" "}
               <span className="text-green-400">&apos;Service Business Systems&apos;</span>,
@@ -168,8 +170,8 @@ export interface HeroProps {
 }
 
 export default function Hero({ badge, heading, subheading }: HeroProps) {
-  const verticalLights = Array.from({ length: 50 }).map((_, i) => ({
-    left: (i + 1) * 80,
+  const verticalLights = Array.from({ length: 15 }).map((_, i) => ({
+    left: (i + 1) * 120,
     duration: `${(i % 5) + 4 + (i % 3) * 0.5}s`,
     delay: `${(i % 7) * 0.5}s`,
   }));
