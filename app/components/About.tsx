@@ -183,31 +183,75 @@ export default function About({ heading, content }: AboutProps) {
     }
   }, []);
 
-  // Split heading by comma for animation effect (or just use space if no comma)
+  // Split heading by comma or <br> for animation effect
   const defaultHeading = "Developer, Designer, Creator, Innovator";
-  const displayHeading = heading || defaultHeading;
-  const parts = displayHeading.includes(',') ? displayHeading.split(',').map((p, i, arr) => i < arr.length - 1 ? p + ',' : p) : [displayHeading];
-  const half = Math.ceil(parts.length / 2);
-  const part1 = parts.slice(0, half).join(' ').trim();
-  const part2 = parts.slice(half).join(' ').trim();
+  let displayHeading = heading || defaultHeading;
+  
+  // Fix potential HTML entities from CMS
+  displayHeading = displayHeading.replace(/&lt;br\s*\/?&gt;/gi, '<br/>');
+
+  let part1 = '';
+  let part2 = '';
+  let hasBr = false;
+
+  const brRegex = /<br\s*\/?>|\n/i;
+  if (brRegex.test(displayHeading)) {
+    const splitParts = displayHeading.split(brRegex);
+    part1 = splitParts[0].trim();
+    part2 = splitParts.slice(1).join(' ').trim(); 
+    hasBr = true;
+  } else if (displayHeading.toLowerCase().includes("digital chaos")) {
+    const matchIndex = displayHeading.toLowerCase().indexOf("digital chaos");
+    if (matchIndex !== -1) {
+       const splitIdx = matchIndex + "digital chaos".length;
+       part1 = displayHeading.substring(0, splitIdx).trim();
+       part2 = displayHeading.substring(splitIdx).trim();
+       hasBr = true;
+    } else {
+       part1 = displayHeading;
+    }
+  } else if (displayHeading.includes(',')) {
+    const parts = displayHeading.split(',');
+    const half = Math.ceil(parts.length / 2);
+    part1 = parts.slice(0, half).join(',').trim() + ',';
+    part2 = parts.slice(half).join(',').trim();
+  } else {
+    part1 = displayHeading;
+    part2 = '';
+  }
 
   return (
     <section id="about" className="py-[35px] md:py-[60px]">
       <div className="container mx-auto">
         {/* Section Heading - Animated */}
-        <h2 className="text-4xl md:text-5xl font-bold mb-16 md:mb-20">
-          <AnimatedHeading className="block">
+        <h2 className="text-4xl md:text-5xl font-bold mb-16 md:mb-20 leading-tight md:leading-tight">
+          <AnimatedHeading className={hasBr ? "inline md:block" : "block"}>
             {part1}
           </AnimatedHeading>
+          {hasBr && <span className="inline md:hidden">&nbsp;</span>}
           {part2 && (
-            <span ref={gradientLineRef} className="block" style={{ opacity: 0 }}>
+            <span ref={gradientLineRef} className={hasBr ? "inline md:block" : "block"} style={{ opacity: 0 }}>
               {(() => {
+                let highlightWord = "";
+                if (part2.includes("Working Systems")) highlightWord = "Working Systems";
+                else if (part2.includes("Working System")) highlightWord = "Working System";
+
+                if (highlightWord) {
+                  return (
+                    <>
+                      {part2.split(highlightWord)[0]}
+                      <span className="gradient-text">{highlightWord}</span>
+                      {part2.split(highlightWord)[1]}
+                    </>
+                  );
+                }
+
                 const words = part2.split(' ');
                 const lastWord = words.pop();
                 return (
                   <>
                     {words.length > 0 && <>{words.join(' ')} </>}
-                    <span className="gradient-text">{lastWord}</span>
+                    <span className="gradient-text">{lastWord || ""}</span>
                   </>
                 );
               })()}
@@ -300,21 +344,18 @@ export default function About({ heading, content }: AboutProps) {
                   create seamless, robust web applications.
                 </p>
 
-                {/* Quote Section - Animated */}
-                <div ref={quoteRef} className="mt-4 pl-6 relative">
-                  <div
-                    className="quote-border absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500 to-blue-500 origin-top"
-                  />
-                  <p className="quote-text text-gray-400 text-base leading-relaxed italic">
-                    I&apos;m a lifelong learner and innovator, driven by a desire to
-                    contribute to the developer community with new ideas and
-                    tools that deliver real value. I&apos;m passionate about
-                    pushing the boundaries of web technologies to
-                    empower developers worldwide.
-                  </p>
-                </div>
               </>
             )}
+
+            {/* Quote Section - Animated */}
+            <div ref={quoteRef} className="mt-4 pl-6 relative">
+              <div
+                className="quote-border absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500 to-blue-500 origin-top"
+              />
+              <p className="quote-text text-gray-400 text-base leading-relaxed italic">
+                &quot;I&apos;m not just a developer, I&apos;m the person who makes sure your website and systems are actually making you money.&quot;
+              </p>
+            </div>
 
             {/* Signature Section */}
             <div className="mt-6">

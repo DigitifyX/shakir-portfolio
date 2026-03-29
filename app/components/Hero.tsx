@@ -15,7 +15,7 @@ const starPositions = [
 
 function SparkleStars() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none overflow-visible">
       {starPositions.map((pos, i) => (
         <div
           key={i}
@@ -89,19 +89,19 @@ function CodeEditor() {
               <span className="text-green-400">&apos;Shakir Ahmed&apos;</span>,
               {"\n"}
               {"  "}<span className="text-red-400">title</span>:{" "}
-              <span className="text-green-400">&apos;Full-Stack Developer | Problem Solver&apos;</span>,
+              <span className="text-green-400">&apos;Full Stack Developer | GHL Specialist | Funnel Builder&apos;</span>,
               {"\n"}
               {"  "}<span className="text-red-400">skills</span>:{" "}
               <span className="text-yellow-300">[</span>
               {"\n"}
-              {"    "}<span className="text-green-400">&apos;React&apos;</span>,{" "}
-              <span className="text-green-400">&apos;NextJS&apos;</span>,{" "}
-              <span className="text-green-400">&apos;Redux&apos;</span>,{" "}
-              <span className="text-green-400">&apos;Express&apos;</span>,
+              {"    "}<span className="text-green-400">&apos;WordPress&apos;</span>,{" "}
+              <span className="text-green-400">&apos;Shopify&apos;</span>,{" "}
+              <span className="text-green-400">&apos;Webflow&apos;</span>,{" "}
+              <span className="text-green-400">&apos;GoHighLevel&apos;</span>,
               {"\n"}
-              {"    "}<span className="text-green-400">&apos;MySQL&apos;</span>,{" "}
-              <span className="text-green-400">&apos;MongoDB&apos;</span>,{" "}
-              <span className="text-green-400">&apos;Docker&apos;</span>,{" "}
+              {"    "}<span className="text-green-400">&apos;React&apos;</span>,{" "}
+              <span className="text-green-400">&apos;Next.js&apos;</span>,{" "}
+              <span className="text-green-400">&apos;Figma&apos;</span>,{" "}
               <span className="text-green-400">&apos;TypeScript&apos;</span>,
               {"\n"}
               {"  "}<span className="text-yellow-300">]</span>,
@@ -117,6 +117,9 @@ function CodeEditor() {
               {"\n"}
               {"  "}<span className="text-red-400">yearsOfExperience</span>:{" "}
               <span className="text-cyan-400">4</span>,
+              {"\n"}
+              {"  "}<span className="text-red-400">speciality</span>:{" "}
+              <span className="text-green-400">&apos;Service Business Systems&apos;</span>,
               {"\n"}
               {"  "}<span className="text-red-400">hireable</span>:{" "}
               <span className="text-purple-400">function</span>
@@ -171,6 +174,8 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
     delay: `${(i % 7) * 0.5}s`,
   }));
 
+  const cleanHeading = heading ? heading.replace(/^Hello\s*/i, '') : '';
+
   return (
     <section id="hero" className="relative pt-[100px] pb-[35px] md:h-[800px] md:py-0 md:pt-[164px] overflow-hidden hero-bg grid-pattern">
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
@@ -206,26 +211,55 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
                 </h1>
                 <SparkleStars />
               </div>
-              <h1 className="hero-heading font-bold whitespace-nowrap" style={{ color: "var(--color-text-heading)" }}>
-                {heading ? (
-                  heading.includes("Shakir Ahmed") ? (
+              <h1 className="hero-heading font-bold" style={{ color: "var(--color-text-heading)" }}>
+                {(() => {
+                  if (!cleanHeading) {
+                    return <>I&apos;m <span className="gradient-text ml-2">Shakir Ahmed</span></>;
+                  }
+
+                  const parts = cleanHeading.split(/<br\s*\/?>/i);
+                  return (
                     <>
-                      {heading.split("Shakir Ahmed")[0]}
-                      <span className="gradient-text ml-2">Shakir Ahmed</span>
-                      {heading.split("Shakir Ahmed")[1]}
+                      {parts.map((part, index) => {
+                        let highlight = "";
+                        if (part.includes("Shakir Ahmed")) highlight = "Shakir Ahmed";
+                        else if (part.includes("Working Systems")) highlight = "Working Systems";
+                        else if (part.includes("Working System")) highlight = "Working System";
+
+                        return (
+                          <span key={index}>
+                            {index > 0 && <br className="hidden md:block" />}
+                            {highlight ? (
+                              <>
+                                {part.split(highlight)[0]}
+                                <span className={highlight === "Shakir Ahmed" ? "gradient-text ml-2" : "gradient-text"}>{highlight}</span>
+                                {part.split(highlight)[1]}
+                              </>
+                            ) : (
+                              parts.length === 1 && part.trim().split(" ").length <= 2 ? (
+                                <span className="gradient-text">{part}</span>
+                              ) : (
+                                part
+                              )
+                            )}
+                          </span>
+                        );
+                      })}
                     </>
-                  ) : (
-                    <span className="gradient-text">{heading}</span>
-                  )
-                ) : (
-                  <>I&apos;m <span className="gradient-text">Shakir Ahmed</span></>
-                )}
+                  );
+                })()}
               </h1>
             </div>
 
-            <div className="mt-5 md:mt-6 animate-hero-fade-up [animation-delay:220ms]">
-              <span className="inline-block px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
-                Full-Stack Developer & Problem Solver
+            <div className="mt-5 md:mt-6 animate-hero-fade-up [animation-delay:220ms] flex flex-wrap items-center gap-3">
+              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
+                WordPress · Shopify · Webflow
+              </span>
+              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
+                GoHighLevel Specialist
+              </span>
+              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
+                Funnel Builder
               </span>
             </div>
 
@@ -244,7 +278,7 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
                   background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)",
                 }}
               >
-                <span className="relative z-10">Learn More</span>
+                <span className="relative z-10">See My Work</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </a>
 
@@ -263,7 +297,7 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
                     maskComposite: "exclude",
                   }}
                 />
-                <span className="relative z-10">Get Resume</span>
+                <span className="relative z-10">Book a Free Call</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </a>
             </div>
