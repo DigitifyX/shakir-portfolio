@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import AnimatedSectionHeading from "./AnimatedSectionHeading";
 import { urlForImage } from "@/sanity/lib/utils";
 
@@ -376,16 +378,48 @@ function QuickViewPopup({
           {/* Bottom CTA Box */}
           <div className="border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-10 md:p-16 text-center mt-12 mb-safe">
             <h3 className="text-2xl md:text-3xl font-bold text-[var(--color-text-heading)] mb-8">Need something similar built for your business?</h3>
-            <a
-              href="#contact"
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
-              className="inline-block px-8 py-4 rounded-full bg-cyan-600 hover:bg-cyan-500 !text-white font-bold tracking-wide transition-all hover:scale-105 shadow-[0_0_20px_rgba(8,145,178,0.3)]"
-            >
-              Let&apos;s Talk
-            </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-[var(--color-border)] text-[var(--color-text-heading)] font-bold tracking-wide transition-all hover:bg-[var(--color-bg-primary)] hover:scale-105 w-full sm:w-auto"
+                >
+                  <svg className="w-5 h-5 opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                  </svg>
+                  GitHub
+                </a>
+              )}
+
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[var(--color-bg-primary)] border border-cyan-600/30 text-cyan-700 dark:text-cyan-400 font-bold tracking-wide transition-all hover:bg-cyan-50 dark:hover:bg-cyan-500/10 hover:scale-105 w-full sm:w-auto"
+                >
+                  View Live Site
+                  <svg className="w-4 h-4 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              )}
+
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                className="flex items-center justify-center px-8 py-4 rounded-full bg-cyan-600 hover:bg-cyan-500 !text-white font-bold tracking-wide transition-all hover:scale-105 shadow-[0_0_20px_rgba(8,145,178,0.3)] w-full sm:w-auto"
+              >
+                Let&apos;s Talk
+              </a>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -546,20 +580,37 @@ function ProjectCard({
             Details
           </button>
           
-          {project.link && (
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="ml-auto flex items-center gap-2 text-[13px] font-semibold text-cyan-700 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 px-5 py-2.5 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
-            >
-              View Live Site
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          )}
+          <div className="ml-auto flex items-center gap-2">
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] px-3 py-2.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors whitespace-nowrap"
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                </svg>
+                GitHub
+              </a>
+            )}
+
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1.5 text-[13px] font-semibold text-white hover:text-white px-4 py-2.5 rounded-lg bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400 dark:hover:bg-cyan-500/20 dark:hover:text-cyan-300 transition-colors shadow-sm dark:shadow-none whitespace-nowrap"
+              >
+                View Live Site
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -570,6 +621,98 @@ export interface ProjectsProps {
   projects: ProjectItem[];
   heading?: string;
   subheading?: string;
+}
+
+/* ============================================
+   🎠 PROJECT CAROUSEL (for >3 items)
+   ============================================ */
+function ProjectCarousel({ 
+  projects, 
+  onQuickView 
+}: { 
+  projects: ProjectItem[]; 
+  onQuickView: (p: ProjectItem) => void; 
+}) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: "start",
+  });
+
+  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
+  const [nextBtnEnabled, setNextBtnEnabled] = useState(true);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  const scrollTo = useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setPrevBtnEnabled(emblaApi.canScrollPrev());
+    setNextBtnEnabled(emblaApi.canScrollNext());
+  }, [emblaApi, setSelectedIndex]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+  }, [emblaApi, onSelect]);
+
+  return (
+    <div className="relative max-w-[1400px] mx-auto group">
+      <div className="overflow-hidden py-4 -mx-4 px-4 md:-mx-8 md:px-8" ref={emblaRef}>
+        <div className="flex -ml-6 md:-ml-8 touch-pan-y">
+          {projects.map((project, index) => (
+            <div
+              key={project._id}
+              className="pl-6 md:pl-8 flex-[0_0_100%] sm:flex-[0_0_80%] md:flex-[0_0_45%] lg:flex-[0_0_33.333%] min-w-0"
+            >
+              <ProjectCard project={project} index={index} onQuickView={onQuickView} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Navigation Buttons */}
+      <div className="flex items-center justify-center gap-4 mt-8">
+        <button
+          onClick={scrollPrev}
+          disabled={!prevBtnEnabled}
+          className="w-10 h-10 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-secondary)] flex items-center justify-center text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-primary)] hover:text-[var(--color-text-heading)] transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed group-hover:scale-100 transform active:scale-95"
+          aria-label="Previous project"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+
+        {/* Pagination Dots */}
+        <div className="flex gap-2 mx-4 no-scrollbar overflow-x-auto max-w-[200px] sm:max-w-none items-center py-2 px-1">
+          {emblaApi?.scrollSnapList().map((_, index) => (
+            <button
+              key={index}
+              onClick={() => scrollTo(index)}
+              className={`h-2 rounded-full transition-all duration-500 ease-in-out flex-shrink-0 ${
+                index === selectedIndex
+                  ? "w-8 bg-cyan-600 dark:bg-cyan-400"
+                  : "w-2 bg-[var(--color-border)] hover:bg-cyan-500/50"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={scrollNext}
+          disabled={!nextBtnEnabled}
+          className="w-10 h-10 rounded-full border border-[var(--color-border)] bg-[var(--color-bg-secondary)] flex items-center justify-center text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-primary)] hover:text-[var(--color-text-heading)] transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed group-hover:scale-100 transform active:scale-95"
+          aria-label="Next project"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function Projects({ projects, heading, subheading }: ProjectsProps) {
@@ -742,20 +885,26 @@ export default function Projects({ projects, heading, subheading }: ProjectsProp
           </div>
         </div>
 
-        {/* Projects Grid */}
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-        >
-          {filteredProjects.map((project, index) => (
-            <ProjectCard
-              key={project._id}
-              project={project}
-              index={index}
-              onQuickView={handleQuickView}
-            />
-          ))}
-        </div>
+        {/* Projects Grid or Carousel */}
+        {filteredProjects.length > 3 ? (
+          <div ref={gridRef}>
+            <ProjectCarousel projects={filteredProjects} onQuickView={handleQuickView} />
+          </div>
+        ) : (
+          <div
+            ref={gridRef}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          >
+            {filteredProjects.map((project, index) => (
+              <ProjectCard
+                key={project._id}
+                project={project}
+                index={index}
+                onQuickView={handleQuickView}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Empty State */}
         {filteredProjects.length === 0 && (
