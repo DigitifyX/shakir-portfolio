@@ -384,7 +384,7 @@ function QuickViewPopup({
               }}
               className="inline-block px-8 py-4 rounded-full bg-cyan-600 hover:bg-cyan-500 !text-white font-bold tracking-wide transition-all hover:scale-105 shadow-[0_0_20px_rgba(8,145,178,0.3)]"
             >
-              Let's Talk
+              Let&apos;s Talk
             </a>
           </div>
         </div>
