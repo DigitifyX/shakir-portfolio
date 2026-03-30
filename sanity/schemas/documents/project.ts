@@ -134,8 +134,9 @@ export default defineType({
     defineField({
       name: 'category',
       title: 'Category',
-      type: 'string',
-      description: 'E.g. Web, Mobile, UI/UX (Used to auto-generate filter tabs)',
+      type: 'reference',
+      to: [{ type: 'category' }],
+      description: 'Select an existing category or create a new one. (Used to auto-generate filter tabs)',
     }),
   ],
 })

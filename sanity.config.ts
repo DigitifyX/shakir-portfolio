@@ -15,6 +15,7 @@ import { structureTool } from "sanity/structure";
 import project from "@/sanity/schemas/documents/project";
 import testimonial from "@/sanity/schemas/documents/testimonial";
 import contactSubmission from "@/sanity/schemas/documents/contactSubmission";
+import category from "@/sanity/schemas/documents/category";
 
 import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/lib/api";
 import { pageStructure, singletonPlugin } from "@/sanity/plugins/settings";
@@ -45,6 +46,7 @@ export default defineConfig({
       post,
       author,
       project,
+      category,
       testimonial,
       contactSubmission,
     ],
