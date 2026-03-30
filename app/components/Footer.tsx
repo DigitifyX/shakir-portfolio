@@ -88,16 +88,11 @@ export default function Footer({ profile }: { profile: ProfileData | null }) {
     };
 
     return (
-        <footer ref={footerRef} className="relative pb-8 pt-4">
+        <footer ref={footerRef} className="relative pb-12 pt-8">
             {/* Gradient Divider */}
             <div
                 ref={dividerRef}
-                className="h-px mx-auto mb-12"
-                style={{
-                    maxWidth: "var(--container-max)",
-                    background:
-                        "linear-gradient(90deg, transparent 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, transparent 100%)",
-                }}
+                className="section-divider mb-9"
             />
 
             <div
@@ -151,7 +146,7 @@ export default function Footer({ profile }: { profile: ProfileData | null }) {
                 </div>
 
                 {/* Bottom Row: Copyright + Back to top */}
-                <div className="footer-anim flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-white/5">
+                <div className="footer-anim flex flex-col sm:flex-row items-center justify-between gap-4 pt-10 mt-4 border-t border-white/5">
                     <p className="text-gray-600 text-xs flex items-center gap-1">
                         © {new Date().getFullYear()} Shakir Ahmed. Built with
                         <Heart className="w-3 h-3 text-pink-500 fill-pink-500 inline" />

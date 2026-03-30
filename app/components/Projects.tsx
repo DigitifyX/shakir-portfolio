@@ -29,13 +29,76 @@ export type ProjectItem = {
   gradient: string | null;
   coverImage: any;
   landscapeImage?: any;
+  resultMetric?: string | null;
+  metrics?: { label: string; value: string }[] | null;
 };
 
 // Placeholder project data — used when no Sanity data exists
 const fallbackProjects: ProjectItem[] = [
-  { _id: "1", title: "Smart Booking System", subtitle: "AutoLux Detailing (Concept)", slug: null, category: "Web App", description: "A multi-step, interactive booking system that captures partial leads.", gradient: "from-purple-600 to-blue-900", link: "#", githubUrl: "#", technologies: ["React", "Zustand", "Tailwind", "Webhooks"], callToAction: "View Case Study", coverImage: null },
-  { _id: "2", title: "Analytics Dashboard", subtitle: "SaaS Platform Concept", slug: null, category: "UI/UX", description: "Clean analytics dashboard designed with Figma for SaaS style products.", gradient: "from-pink-500 to-orange-500", link: "#", technologies: ["Figma", "Design System"], callToAction: "View Mockups", coverImage: null },
-  { _id: "3", title: "Learning App UI", subtitle: "Mobile EdTech Concept", slug: null, category: "Mobile", description: "Mobile app screens for a simple learning / course experience.", gradient: "from-blue-400 to-cyan-500", link: "#", technologies: ["React Native", "Expo"], callToAction: "See Details", coverImage: null },
+  { 
+    _id: "1", 
+    title: "Smart Booking System", 
+    subtitle: "Custom SaaS", 
+    slug: null, 
+    category: "Web App", 
+    description: "Built a fully automated scheduling platform eliminating manual back-and-forth emails for service businesses.", 
+    resultMetric: "10h/wk Admin Saved",
+    gradient: "from-purple-600 to-blue-900", 
+    link: "#", 
+    githubUrl: "#", 
+    technologies: ["React", "Next.js", "Zustand", "Stripe"], 
+    callToAction: "View Case Study", 
+    coverImage: null,
+    challenge: "The client was losing 10-15 hours every week managing appointments via email and text, resulting in missed leads, delayed payments, and heavy administrative overhead.",
+    solution: "I engineered a seamless multi-step booking funnel that captures lead information, processes deposits securely, and syncs directly with their existing Google Calendar in real-time.",
+    metrics: [
+      { label: "Admin Time Saved", value: "10+ hrs/wk" },
+      { label: "Show-up Rate", value: "98%" },
+      { label: "Booking Speed", value: "< 2 mins" }
+    ]
+  },
+  { 
+    _id: "2", 
+    title: "Analytics Dashboard", 
+    subtitle: "FinTech Platform", 
+    slug: null, 
+    category: "UI/UX", 
+    description: "Designed a clean, intuitive analytics dashboard that makes complex financial charts simple to read at a glance.", 
+    resultMetric: "Data loaded 3x faster",
+    gradient: "from-pink-500 to-orange-500", 
+    link: "#", 
+    technologies: ["Figma", "Design System", "TailwindCSS"], 
+    callToAction: "View Mockups", 
+    coverImage: null,
+    challenge: "Users were overwhelmed by dense data tables and slow-loading financial charts, leading to high abandonment rates and poor product adoption.",
+    solution: "Created a modular widget system focusing strictly on the 'North Star' metrics users care about. Implemented skeleton loaders and deferred secondary data to keep the perceived performance lightning fast.",
+    metrics: [
+      { label: "Load Time", value: "0.8s" },
+      { label: "User Retention", value: "+45%" },
+      { label: "Data Points", value: "10,000+" }
+    ]
+  },
+  { 
+    _id: "3", 
+    title: "Learning App UI", 
+    subtitle: "Mobile EdTech", 
+    slug: null, 
+    category: "Mobile", 
+    description: "Mobile-first learning experience emphasizing deep focus and distraction-free course consumption.", 
+    resultMetric: "90% Course Completion",
+    gradient: "from-blue-400 to-cyan-500", 
+    link: "#", 
+    technologies: ["React Native", "Expo", "Reanimated"], 
+    callToAction: "See Details", 
+    coverImage: null,
+    challenge: "Mobile learners were constantly distracted by cluttered interfaces and non-essential notifications, breaking their state of flow.",
+    solution: "Stripped away all non-critical UI elements during active learning mode. Introduced micro-interactions and progress rings that reward consecutive completions without being visually overwhelming.",
+    metrics: [
+      { label: "Completion Rate", value: "90%" },
+      { label: "Session Length", value: "45 min" },
+      { label: "App Rating", value: "4.9/5" }
+    ]
+  },
 ];
 
 // UI Mockup Placeholder Component
@@ -73,221 +136,339 @@ function QuickViewPopup({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // Normalize images array
+  const images: any[] = [];
+  if (project?.landscapeImage) images.push(project.landscapeImage);
+  else if (project?.coverImage) images.push(project.coverImage);
+  
+  if (project?.gallery && Array.isArray(project.gallery)) {
+    images.push(...project.gallery);
+  }
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        if (lightboxIndex !== null) {
+          setLightboxIndex(null);
+        } else {
+          onClose();
+        }
+      }
+      
+      if (lightboxIndex !== null) {
+        if (e.key === "ArrowRight") {
+          setLightboxIndex((prev) => (prev! + 1) % images.length);
+        }
+        if (e.key === "ArrowLeft") {
+          setLightboxIndex((prev) => (prev! - 1 + images.length) % images.length);
+        }
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, lightboxIndex, images.length]);
 
   if (!isOpen || !project) return null;
 
+  const renderGallery = () => {
+    if (images.length === 0) return (
+      <div className="absolute inset-0 flex items-center justify-center text-[var(--color-text-secondary)]">No Image</div>
+    );
+
+    const renderImage = (img: any, idx: number, className: string) => (
+      <div 
+        key={idx} 
+        className={`relative overflow-hidden group cursor-zoom-in rounded-none ${className}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          setLightboxIndex(idx);
+        }}
+      >
+        <Image
+          src={urlForImage(img)?.url() as string}
+          alt={img?.alt || project.title || `Gallery Image ${idx + 1}`}
+          title={img?.title || undefined}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 dark:group-hover:bg-black/40 transition-colors duration-300" />
+      </div>
+    );
+
+    if (images.length === 1) {
+      return renderImage(images[0], 0, "w-full h-full");
+    }
+    
+    if (images.length === 2) {
+      return (
+        <div className="flex flex-col md:flex-row w-full h-full gap-1.5 bg-[var(--color-border)]">
+          {renderImage(images[0], 0, "w-full md:w-1/2 h-full")}
+          {renderImage(images[1], 1, "w-full md:w-1/2 h-full")}
+        </div>
+      );
+    }
+    
+    if (images.length === 3) {
+      return (
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-1.5 w-full h-full bg-[var(--color-border)]">
+          {renderImage(images[0], 0, "h-[250px] md:h-full w-full")}
+          <div className="grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-1.5 h-[150px] md:h-full w-full">
+            {renderImage(images[1], 1, "h-full w-full")}
+            {renderImage(images[2], 2, "h-full w-full")}
+          </div>
+        </div>
+      );
+    }
+
+    if (images.length === 4) {
+      return (
+        <div className="grid grid-cols-2 grid-rows-2 gap-1.5 w-full h-full bg-[var(--color-border)]">
+          {images.map((img, idx) => renderImage(img, idx, "h-[150px] md:h-full w-full"))}
+        </div>
+      );
+    }
+
+    if (images.length === 5) {
+      return (
+        <div className="flex flex-col gap-1.5 w-full h-full bg-[var(--color-border)]">
+          <div className="grid grid-cols-3 gap-1.5 h-[150px] md:h-1/2">
+             {images.slice(0, 3).map((img, idx) => renderImage(img, idx, "h-full w-full"))}
+          </div>
+          <div className="grid grid-cols-2 gap-1.5 h-[150px] md:h-1/2">
+             {images.slice(3, 5).map((img, idx) => renderImage(img, idx + 3, "h-full w-full"))}
+          </div>
+        </div>
+      );
+    }
+
+    if (images.length === 6) {
+      return (
+        <div className="grid grid-cols-2 md:grid-cols-3 grid-rows-3 md:grid-rows-2 gap-1.5 w-full h-full bg-[var(--color-border)]">
+          {images.map((img, idx) => renderImage(img, idx, "h-[150px] md:h-full w-full"))}
+        </div>
+      );
+    }
+
+    // 7+ images masonry flex/grid
+    return (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 w-full h-full auto-rows-[150px] md:auto-rows-[250px] bg-[var(--color-border)]">
+          {images.map((img, idx) => renderImage(img, idx, "h-full w-full"))}
+        </div>
+    );
+  };
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pt-16 pb-20 sm:p-6 md:p-6 md:pt-6" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center md:p-6" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+        className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md"
         onClick={onClose}
       />
 
       {/* Popup Content */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative bg-[var(--color-bg-primary)] w-full max-w-5xl max-h-[78vh] md:max-h-[85vh] mt-4 md:mt-0 rounded-2xl border border-[var(--color-border)] overflow-hidden flex flex-col md:flex-row shadow-2xl"
-        style={{
-          boxShadow: "0 25px 50px -12px rgba(var(--glow-accent-rgb), 0.25)",
-        }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="relative bg-[var(--color-bg-primary)] w-full h-full md:h-auto md:max-h-[90vh] md:w-[90vw] md:max-w-4xl md:rounded-2xl border-0 md:border border-[var(--color-border)] overflow-hidden flex flex-col shadow-2xl z-10"
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           aria-label="Close project details"
-          className="absolute top-3 right-3 md:top-4 md:right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/30 shadow-lg transition-all"
+          className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-hover)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] transition-all shadow-lg"
         >
-          <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        {/* Left Column - Visuals (Gradient + Cover Mockup + Gallery) */}
-        <div className={`w-full md:w-5/12 lg:w-1/2 relative flex flex-col min-h-[300px] shrink-0 bg-gradient-to-br ${project.gradient || "from-gray-800 to-gray-900"} overflow-hidden`}>
-          {/* Main Visual Area */}
-          <div className="flex-grow flex items-center justify-center p-8 relative">
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="relative w-full h-full flex items-center justify-center z-10">
-              {project.landscapeImage ? (
-                <div className="relative w-full h-full min-h-[250px] md:h-full">
-                  <Image
-                    src={urlForImage(project.landscapeImage)?.url() as string}
-                    alt={project.title || "Project Landscape"}
-                    fill
-                    className="object-contain md:object-cover drop-shadow-2xl"
-                    loading="lazy"
-                  />
-                </div>
-              ) : project.coverImage ? (
-                <div className="relative w-full h-full min-h-[250px] md:h-full">
-                  <Image
-                    src={urlForImage(project.coverImage)?.url() as string}
-                    alt={project.title || "Project Cover"}
-                    fill
-                    className="object-contain md:object-cover drop-shadow-2xl"
-                    loading="lazy"
-                  />
-                </div>
-              ) : (
-                <div className="transform scale-110 md:scale-125">
-                  <UIMockup />
-                </div>
-              )}
+        <div className="overflow-y-auto w-full flex-1 no-scrollbar pb-10">
+          {/* Hero Zone */}
+          <div className="px-6 md:px-12 pt-16 md:pt-20 pb-12 text-center relative">
+            {project.subtitle && (
+              <div className="text-xs uppercase tracking-[0.2em] font-bold text-cyan-600 dark:text-cyan-500 mb-4">
+                {project.subtitle}
+              </div>
+            )}
+            <h2 className="text-3xl md:text-5xl lg:text-5xl font-bold text-[var(--color-text-heading)] mb-10 mx-auto max-w-3xl leading-tight">
+              {project.title}
+            </h2>
+
+            {/* Smart Gallery Hero */}
+            <div className={`w-full ${images.length > 6 ? '' : (images.length > 1 ? 'aspect-auto' : 'aspect-[4/3]')} md:aspect-[21/9] rounded-xl overflow-hidden relative border border-[var(--color-border)] shadow-xl bg-[var(--color-bg-secondary)]`}>
+              {renderGallery()}
             </div>
           </div>
 
-          {/* Optional: Future Gallery Thumbnails Row */}
-          {project.gallery && project.gallery.length > 0 && (
-            <div className="h-24 bg-black/40 backdrop-blur-md border-t border-white/10 flex gap-2 p-3 overflow-x-auto no-scrollbar relative z-10">
-              {project.gallery.map((img, i) => (
-                <div key={i} className="flex-shrink-0 w-24 h-full bg-white/5 rounded border border-white/10">
-                  {/* Image Thumbnail Placeholder */}
-                </div>
-              ))}
+          {/* Results Banner */}
+          {project.metrics && project.metrics.length > 0 && (
+            <div className="px-6 md:px-12 mb-16">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                {project.metrics.map((metric, i) => (
+                  <div key={i} className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl p-6 md:p-8 text-center shadow-sm">
+                    <div className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] mb-2 tracking-tight">{metric.value}</div>
+                    <div className="text-xs uppercase tracking-[0.1em] text-[var(--color-text-secondary)]">{metric.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-        </div>
 
-        {/* Right Column - Project Details */}
-        <div className="w-full md:w-7/12 lg:w-1/2 flex flex-col bg-[var(--color-bg-primary)] overflow-y-auto p-6 md:p-8 lg:p-12 min-h-0 relative">
-          <div className="flex-1 flex flex-col">
-
-            {/* Header section */}
-            <div className="mb-8">
-              {project.subtitle && (
-                <div className="text-sm font-semibold text-cyan-500 dark:text-cyan-400 uppercase tracking-wider mb-2">
-                  {project.subtitle}
-                </div>
-              )}
-              <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-text-heading)] mb-4">
-                {project.title}
-              </h2>
-              <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-                {project.description}
+          {/* The Challenge */}
+          {project.challenge && (
+            <div className="px-6 md:px-16 mb-16 max-w-4xl mx-auto">
+              <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[var(--color-text-secondary)] opacity-70 mb-6 text-center md:text-left">The Challenge</div>
+              <p className="text-[17px] md:text-lg text-[var(--color-text-secondary)] leading-[1.7] md:leading-[1.8] font-medium tracking-wide">
+                {project.challenge}
               </p>
             </div>
+          )}
 
-            {/* Tech Stack */}
-            {project.technologies && project.technologies.length > 0 && (
-              <div className="mb-8">
-                <h4 className="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-3">Technologies Used</h4>
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1.5 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Challenge & Solution Grid */}
-            {(project.challenge || project.solution) && (
-              <div className="grid grid-cols-1 gap-6 mb-8">
-                {project.challenge && (
-                  <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10">
-                    <h4 className="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold mb-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                      The Challenge
-                    </h4>
-                    <p className="text-sm text-gray-700 dark:text-gray-400 leading-relaxed">{project.challenge}</p>
-                  </div>
-                )}
-                {project.solution && (
-                  <div className="p-5 rounded-2xl bg-green-50 dark:bg-green-500/5 border border-green-200 dark:border-green-500/10">
-                    <h4 className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold mb-2">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      The Solution
-                    </h4>
-                    <p className="text-sm text-gray-700 dark:text-gray-400 leading-relaxed">{project.solution}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Key Features List */}
-            {project.features && project.features.length > 0 && (
-              <div className="mb-8">
-                <h4 className="text-sm font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider mb-4">Key Features</h4>
-                <ul className="space-y-3">
-                  {project.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-sm text-[var(--color-text-primary)]">
-                      <svg className="w-5 h-5 text-cyan-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="leading-relaxed">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* CTA Buttons - Matching Card Style */}
-            <div className="mt-auto pt-6 border-t border-[var(--color-border)] flex items-center gap-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClose();
-                }}
-                className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl px-4 py-2 transition-all duration-300 pointer-events-none opacity-80"
-              >
-                Details
-              </button>
-
-              {project.link && (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 border border-cyan-200 dark:border-cyan-500/20 rounded-xl px-4 py-2 transition-all duration-300"
-                >
-                  {project.callToAction || "Live Site"}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              )}
-
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-9 h-9 text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-bg-hover)] rounded-xl transition-all duration-300 flex-shrink-0 relative"
-                  style={{ marginLeft: 'auto' }}
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
-                    <path d="M12 2C6.477 2 2 6.47 2 11.984c0 4.418 2.865 8.166 6.839 9.489.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.48C19.138 20.147 22 16.4 22 11.984 22 6.47 17.523 2 12 2z" />
-                  </svg>
-                </a>
-              )}
+          {/* The Approach */}
+          {project.solution && (
+            <div className="px-6 md:px-16 mb-16 max-w-4xl mx-auto">
+              <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[var(--color-text-secondary)] opacity-70 mb-6 text-center md:text-left">The Approach</div>
+              <p className="text-[17px] md:text-lg text-[var(--color-text-secondary)] leading-[1.7] md:leading-[1.8] font-medium tracking-wide">
+                {project.solution}
+              </p>
             </div>
+          )}
 
+          {/* Key Features */}
+          {project.features && project.features.length > 0 && (
+            <div className="px-6 md:px-16 mb-16 max-w-4xl mx-auto">
+              <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[var(--color-text-secondary)] opacity-70 mb-6 text-center md:text-left">Key Features</div>
+              <ul className="space-y-4">
+                {project.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-4 text-[var(--color-text-secondary)]">
+                    <svg className="w-5 h-5 text-cyan-600 dark:text-cyan-500 flex-shrink-0 mt-0.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-[16px] md:text-[17px] leading-[1.6] tracking-wide font-medium">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Technologies Used */}
+          {project.technologies && project.technologies.length > 0 && (
+            <div className="px-6 md:px-16 mb-16 max-w-4xl mx-auto">
+              <div className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[var(--color-text-secondary)] opacity-70 mb-6 text-center md:text-left">Technologies Used</div>
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                {project.technologies.map((tech, i) => (
+                  <span key={i} className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] px-4 py-2 rounded-lg text-xs md:text-sm tracking-wide shadow-sm">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Bottom CTA Box */}
+          <div className="border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-10 md:p-16 text-center mt-12 mb-safe">
+            <h3 className="text-2xl md:text-3xl font-bold text-[var(--color-text-heading)] mb-8">Need something similar built for your business?</h3>
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+              className="inline-block px-8 py-4 rounded-full bg-cyan-600 hover:bg-cyan-500 !text-white font-bold tracking-wide transition-all hover:scale-105 shadow-[0_0_20px_rgba(8,145,178,0.3)]"
+            >
+              Let's Talk
+            </a>
           </div>
         </div>
       </motion.div>
+
+      {/* Lightbox Overlay */}
+      <AnimatePresence>
+        {lightboxIndex !== null && images.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/95 backdrop-blur-md"
+            onClick={() => setLightboxIndex(null)}
+          >
+            {/* Close Lightbox */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setLightboxIndex(null); }}
+              className="absolute top-6 right-6 z-[120] text-white/50 hover:text-white transition-colors"
+              aria-label="Close Lightbox"
+            >
+              <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Prev */}
+            {images.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightboxIndex((prev) => (prev! - 1 + images.length) % images.length);
+                }}
+                className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-[120] p-4 text-white/50 hover:text-white transition-colors"
+                aria-label="Previous Image"
+              >
+                <svg className="w-8 h-8 md:w-12 md:h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Next */}
+            {images.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightboxIndex((prev) => (prev! + 1) % images.length);
+                }}
+                className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-[120] p-4 text-white/50 hover:text-white transition-colors"
+                aria-label="Next Image"
+              >
+                <svg className="w-8 h-8 md:w-12 md:h-12 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Image Container */}
+            <motion.div 
+              className="relative w-full h-full max-w-[95vw] max-h-[85vh] md:max-w-[85vw] md:max-h-[85vh]"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={urlForImage(images[lightboxIndex])?.url() as string}
+                alt={images[lightboxIndex]?.alt || project.title || `Lightbox Image ${lightboxIndex + 1}`}
+                title={images[lightboxIndex]?.title || undefined}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-// Project Card Component with GSAP animation and hover effect
+// Project Card Component
 function ProjectCard({
   project,
   index,
@@ -297,229 +478,85 @@ function ProjectCard({
   index: number;
   onQuickView: (project: ProjectItem) => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
-
-  // Note: Card animations are now handled by the parent grid animation
-  // This keeps the animation smooth when filters change
-
   return (
     <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      className="group relative overflow-hidden rounded-2xl cursor-pointer border border-transparent flex flex-col h-full"
-      style={{
-        transformStyle: "preserve-3d",
-        perspective: "1000px",
-        background: isHovering
-          ? `radial-gradient(circle 250px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-bg-intensity)), transparent), var(--color-card-surface)`
-          : 'var(--color-card-surface)',
-      }}
+      onClick={() => onQuickView(project)}
+      className="group flex flex-col h-full overflow-hidden rounded-2xl cursor-pointer bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-hover)] border border-[var(--color-border)] hover:border-[var(--color-border-hover)] transition-all duration-300 hover:-translate-y-1 shadow-lg shadow-black/5 dark:shadow-black/20"
     >
-      {/* Animated border glow that follows mouse */}
-      <div
-        className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300 z-20"
-        style={{
-          background: `radial-gradient(circle 200px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-accent-intensity)), transparent)`,
-          opacity: isHovering ? 1 : 0,
-          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          maskComposite: 'xor',
-          WebkitMaskComposite: 'xor',
-          padding: '1.5px',
-        }}
-      />
-      {/* Static border */}
-      <div className="absolute inset-0 rounded-2xl border border-cyan-500/20 pointer-events-none z-20" />
-
-      {/* Top Section - Gradient Background and Cover Image */}
-      <div
-        ref={imageRef}
-        className={`relative h-48 bg-gradient-to-br ${project.gradient || "from-gray-800 to-gray-900"} overflow-hidden transition-all duration-300 flex items-center justify-center`}
-      >
+      {/* Top Section - Cover Image */}
+      <div className="relative w-full h-56 md:h-64 overflow-hidden border-b border-[var(--color-border)] bg-[var(--color-bg-primary)]">
         {project.coverImage ? (
-          <div className="absolute inset-0 w-full h-full group-hover:scale-110 transition-transform duration-700">
-            <Image
-              src={urlForImage(project.coverImage)?.url() as string}
-              alt={project.title || "Project Cover"}
-              fill
-              className="object-cover object-top opacity-80 blur-[2px] group-hover:opacity-100 group-hover:blur-0 transition-all duration-500"
-              loading="lazy"
-            />
-          </div>
+          <Image
+            src={urlForImage(project.coverImage)?.url() as string}
+            alt={project.title || "Project Cover"}
+            fill
+            className="object-cover object-top opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-in-out"
+            loading="lazy"
+          />
         ) : (
-          <UIMockup />
+          <div className="absolute inset-0 flex items-center justify-center transform scale-125 opacity-30">
+            <UIMockup />
+          </div>
         )}
-
-        {/* Overlay with Quick View Button and Technology Tags - Appears on card hover */}
-        <div
-          className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-all duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'
-            }`}
-        >
-          {/* Quick View Button - Top Left with beautiful animation */}
-          <motion.button
-            initial={{ scale: 0, opacity: 0, x: -20, y: -20, rotate: -180 }}
-            animate={{
-              scale: isHovering ? 1 : 0,
-              opacity: isHovering ? 1 : 0,
-              x: isHovering ? 0 : -20,
-              y: isHovering ? 0 : -20,
-              rotate: isHovering ? 0 : -180,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 20,
-              delay: 0.1,
-            }}
-            whileHover={{
-              scale: 1.15,
-              rotate: 5,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickView(project);
-            }}
-            className="absolute top-4 left-4 w-8 h-8 rounded-lg bg-cyan-500/90 hover:bg-cyan-500 text-white backdrop-blur-sm border border-cyan-400/50 shadow-lg shadow-cyan-500/30 flex items-center justify-center pointer-events-auto"
-          >
-            <motion.svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              strokeWidth={2.5}
-              initial={{ scale: 0 }}
-              animate={{ scale: isHovering ? 1 : 0 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-              />
-            </motion.svg>
-          </motion.button>
-
-          {/* Technology Tags - Bottom Left - Same Line with stagger animation - 10px above bottom */}
-          <motion.div
-            initial={{ x: -50, opacity: 0 }}
-            animate={{
-              x: isHovering ? 0 : -50,
-              opacity: isHovering ? 1 : 0
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 200,
-              damping: 20,
-              delay: 0.2,
-            }}
-            className="absolute left-4 right-4 flex flex-wrap gap-2 pointer-events-none"
-            style={{ bottom: '30px' }}
-          >
-            {project.technologies?.map((tech, idx) => (
-              <motion.span
-                key={idx}
-                initial={{ scale: 0, opacity: 0, y: 20 }}
-                animate={{
-                  scale: isHovering ? 1 : 0,
-                  opacity: isHovering ? 1 : 0,
-                  y: isHovering ? 0 : 20,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20,
-                  delay: 0.25 + (idx * 0.1),
-                }}
-                whileHover={{
-                  scale: 1.1,
-                  y: -2,
-                }}
-                className="px-3 py-1.5 rounded-lg bg-black/60 dark:bg-black/60 backdrop-blur-sm text-white text-xs font-medium border border-white/20 whitespace-nowrap"
-              >
-                {tech}
-              </motion.span>
-            ))}
-          </motion.div>
-        </div>
       </div>
 
-      {/* Bottom Section - Dark background with blur effect and content - Left Aligned */}
-      <div className="p-6 relative z-10 backdrop-blur-sm text-left flex flex-col flex-grow bg-[var(--color-bg-primary)] border-t border-[var(--color-border)] md:border-t-0 md:bg-transparent">
-        {/* Subtitle / Client */}
+      {/* Bottom Section - Content */}
+      <div className="p-6 md:p-8 flex flex-col flex-grow relative z-10 text-left">
         {project.subtitle && (
-          <span className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-1 line-clamp-1">
+          <div className="text-[11px] font-bold text-cyan-600 dark:text-cyan-500 uppercase tracking-[0.2em] mb-3">
             {project.subtitle}
-          </span>
+          </div>
         )}
 
-        {/* Title */}
-        <h3 className="text-xl font-bold text-[var(--color-text-heading)] mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors line-clamp-2">
+        <h3 className="text-2xl md:text-3xl font-bold text-[var(--color-text-heading)] mb-3 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors ease-in-out line-clamp-2">
           {project.title}
         </h3>
 
-        {/* Description */}
-        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4 line-clamp-2 flex-grow">
+        <p className="text-[15px] text-[var(--color-text-secondary)] leading-relaxed mb-6 line-clamp-2">
           {project.description}
         </p>
 
-        {/* CTA Button placed at bottom */}
-        <div className="mt-auto flex items-center gap-3 border-t border-[var(--color-border)] pt-4 mt-4">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickView(project);
-            }}
-            className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-xl px-4 py-2 transition-all duration-300 group-hover:border-[var(--color-border-hover)]"
-          >
+        {/* Standout Metric Callout */}
+        {project.resultMetric && (
+          <div className="mb-6 bg-cyan-50 dark:bg-cyan-950/20 border border-cyan-200 dark:border-cyan-500/10 rounded-lg py-2.5 px-4 text-[13px] font-semibold text-cyan-700 dark:text-cyan-300">
+            {project.resultMetric}
+          </div>
+        )}
+
+        {/* Tech Stack Chips at bottom of content */}
+        <div className="flex flex-wrap gap-2 mb-8 mt-auto">
+          {project.technologies?.slice(0, 3).map((tech, idx) => (
+            <span
+              key={idx}
+              className="px-2.5 py-1 rounded bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] text-[11px] uppercase tracking-wider"
+            >
+              {tech}
+            </span>
+          ))}
+          {project.technologies && project.technologies.length > 3 && (
+            <span className="px-2.5 py-1 rounded bg-transparent border border-transparent text-[var(--color-text-secondary)] opacity-70 text-[11px] uppercase tracking-wider">
+              +{project.technologies.length - 3}
+            </span>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3 border-t border-[var(--color-border)] pt-5 mt-auto">
+          <button className="text-[13px] font-semibold text-[var(--color-text-heading)] px-5 py-2.5 rounded-lg bg-[var(--color-bg-primary)] group-hover:bg-[var(--color-border)] transition-colors border border-transparent">
             Details
           </button>
-
+          
           {project.link && (
             <a
               href={project.link}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 border border-cyan-200 dark:border-cyan-500/20 rounded-xl px-4 py-2 transition-all duration-300"
+              className="ml-auto flex items-center gap-2 text-[13px] font-semibold text-cyan-700 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 px-5 py-2.5 rounded-lg bg-cyan-100 dark:bg-cyan-500/10 hover:bg-cyan-200 dark:hover:bg-cyan-500/20 transition-colors"
             >
-              {project.callToAction || "Live Site"}
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              View Live Site
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          )}
-
-          {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center justify-center w-9 h-9 text-[var(--color-text-secondary)] hover:text-[var(--color-text-heading)] bg-[var(--color-bg-secondary)] hover:bg-[var(--color-bg-hover)] border border-[var(--color-border)] hover:border-[var(--color-border-hover)] rounded-xl transition-all duration-300 flex-shrink-0 relative"
-              style={{ marginLeft: 'auto' }}
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
-                <path d="M12 2C6.477 2 2 6.47 2 11.984c0 4.418 2.865 8.166 6.839 9.489.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.379.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.48C19.138 20.147 22 16.4 22 11.984 22 6.47 17.523 2 12 2z" />
               </svg>
             </a>
           )}

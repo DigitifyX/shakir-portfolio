@@ -47,11 +47,15 @@ export default async function HomePage() {
         content={pageContent?.aboutText ?? undefined}
       />
 
+      <div className="section-divider" />
+
       {/* Skills Section */}
       <SkillsClient
         heading={pageContent?.skillsHeading ?? undefined}
         subheading={pageContent?.skillsSubheading ?? undefined}
       />
+
+      <div className="section-divider" />
 
       {/* Projects Section */}
       <Projects
@@ -60,12 +64,16 @@ export default async function HomePage() {
         subheading={pageContent?.projectsSubheading ?? undefined}
       />
 
+      <div className="section-divider" />
+
       {/* Testimonials Section */}
       <TestimonialsClient
         testimonials={testimonials}
         heading={pageContent?.testimonialsHeading ?? undefined}
         subheading={pageContent?.testimonialsSubheading ?? undefined}
       />
+
+      <div className="section-divider" />
 
       {/* Contact Section */}
       <Contact

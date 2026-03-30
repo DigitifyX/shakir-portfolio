@@ -564,7 +564,7 @@ export default function Skills({ heading, subheading }: SkillsProps) {
           <IconCloud />
         </motion.div>
 
-        {/* Skills Grid - 40px gap from cloud */}
+        {/* Package Cards - 40px gap from cloud */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -572,206 +572,259 @@ export default function Skills({ heading, subheading }: SkillsProps) {
           viewport={{ once: true }}
           className="mt-[40px]"
         >
-          <SkillsGrid />
+          <PackageCards />
         </motion.div>
       </div>
     </section>
   );
 }
 
-// Skills Grid Component
-function SkillsGrid() {
-  const skillCategories = [
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
-          <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
-        </svg>
-      ),
-      title: "Frontend Development",
-      skills: [
-        { name: "React", color: "#61DAFB" },
-        { name: "Next.js", color: "#ffffff" },
-        { name: "TypeScript", color: "#3178C6" },
-        { name: "Tailwind", color: "#06B6D4" },
-        { name: "HTML5", color: "#E34F26" },
-        { name: "CSS3", color: "#1572B6" },
-      ],
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z" />
-          <circle cx="12" cy="12" r="2" />
-        </svg>
-      ),
-      title: "Backend Development",
-      skills: [
-        { name: "Node.js", color: "#339933" },
-        { name: "Express", color: "#ffffff" },
-        { name: "MongoDB", color: "#47A248" },
-        { name: "MySQL", color: "#4479A1" },
-        { name: "GraphQL", color: "#E10098" },
-        { name: "REST APIs", color: "#00D9FF" },
-      ],
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" />
-        </svg>
-      ),
-      title: "UI/UX Design",
-      skills: [
-        { name: "Figma", color: "#F24E1E" },
-        { name: "Framer", color: "#0055FF" },
-        { name: "Responsive Design", color: "#06B6D4" },
-        { name: "Prototyping", color: "#FF6B35" },
-      ],
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z" />
-        </svg>
-      ),
-      title: "Cloud & DevOps",
-      skills: [
-        { name: "AWS", color: "#FF9900" },
-        { name: "Docker", color: "#2496ED" },
-        { name: "Git", color: "#F05032" },
-        { name: "GitHub", color: "#ffffff" },
-        { name: "Vercel", color: "#ffffff" },
-        { name: "CI/CD", color: "#00D9FF" },
-      ],
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-        </svg>
-      ),
-      title: "Tools & Technologies",
-      skills: [
-        { name: "VS Code", color: "#007ACC" },
-        { name: "Jest", color: "#C21325" },
-        { name: "Cypress", color: "#ffffff" },
-        { name: "Redux", color: "#764ABC" },
-        { name: "Firebase", color: "#FFCA28" },
-        { name: "Sanity", color: "#F03E2F" },
-      ],
-    },
-    {
-      icon: (
-        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-          <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z" />
-        </svg>
-      ),
-      title: "Automation & Marketing",
-      skills: [
-        { name: "WordPress", color: "#21759B" },
-        { name: "GoHighLevel", color: "#FF6B35" },
-        { name: "n8n", color: "#EA4B71" },
-        { name: "ClickFunnels", color: "#0066FF" },
-        { name: "Zapier", color: "#FF4A00" },
-      ],
-    },
-  ];
+/* ============================================
+   💎 PACKAGE / PRICING CARDS — Minimal Design
+   ============================================ */
 
+const packages = [
+  {
+    label: "Web",
+    title: "Website Design & Development",
+    price: "$300",
+    pricePrefix: "From",
+    description:
+      "A fast, modern, mobile-friendly website built on WordPress, Shopify, or your preferred CMS. Designed to convert visitors into leads.",
+    includes: [
+      "Custom design (no templates)",
+      "WordPress or Shopify setup",
+      "Mobile optimized",
+      "Contact and quote forms",
+      "SEO ready",
+      "Delivered in 7 to 10 days",
+    ],
+    cta: "Get Started",
+    featured: false,
+  },
+  {
+    label: "Most Popular",
+    title: "GoHighLevel Funnel & Automation",
+    price: "$500",
+    pricePrefix: "From",
+    description:
+      "A complete GHL system with pipeline, automations, booking calendar, and follow-up sequences — set up and ready to generate leads.",
+    includes: [
+      "GHL sub-account setup",
+      "Lead capture funnel",
+      "Email and SMS automations",
+      "Calendar and booking integration",
+      "CRM pipeline configuration",
+    ],
+    cta: "Get Started",
+    featured: true,
+  },
+  {
+    label: "Premium",
+    title: "Full Done-For-You System",
+    price: "$1,200",
+    pricePrefix: "From",
+    description:
+      "Website plus GHL automation combined. Everything a service business needs to capture, follow up, and close leads — fully built and handed over to you.",
+    includes: [
+      "Everything in Website and GHL packages",
+      "Custom quote or lead form",
+      "GoHighLevel onboarding and training",
+      "30 days post-launch support",
+      "Ongoing maintenance available",
+    ],
+    cta: "Let\u2019s Talk",
+    featured: false,
+  },
+];
+
+// Minimal checkmark — small, muted stroke only
+function CheckMark() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-      {skillCategories.map((category, index) => (
-        <SkillCard key={category.title} category={category} index={index} />
-      ))}
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      className="w-4 h-4 flex-shrink-0 mt-[3px]"
+      aria-hidden="true"
+    >
+      <path
+        d="M4 8.5L7 11.5L12 5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ color: 'var(--color-text-muted)' }}
+      />
+    </svg>
+  );
+}
+
+function PackageCards() {
+  return (
+    <div className="flex flex-col items-center">
+      {/* Cards — aligned at bottom, featured card rises above */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 w-full lg:items-end">
+        {packages.map((pkg, index) => (
+          <PackageCard key={pkg.title} pkg={pkg} index={index} />
+        ))}
+      </div>
+
+      {/* CTA text below cards */}
+      <motion.p
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+        viewport={{ once: true }}
+        className="mt-12 text-[13px] md:text-sm text-center"
+        style={{ color: 'var(--color-text-muted)' }}
+      >
+        Not sure which package fits your business?{" "}
+        <a
+          href="#contact"
+          onClick={(e) => {
+            e.preventDefault();
+            if (typeof window !== 'undefined' && window.Calendly) {
+              window.Calendly.initPopupWidget({ url: 'https://calendly.com/shakirjoy00/30min' });
+            }
+          }}
+          className="underline underline-offset-[3px] decoration-white/20 hover:decoration-white/40 transition-colors duration-200 cursor-pointer"
+          style={{ color: 'var(--color-text-secondary)' }}
+        >
+          Book a free 15-minute call
+        </a>{" "}
+        and I&apos;ll tell you exactly what you need.
+      </motion.p>
     </div>
   );
 }
 
-// Skill Card with Mouse Hover Spotlight Effect
-function SkillCard({
-  category,
-  index
+// Individual Package Card — minimal clean design
+function PackageCard({
+  pkg,
+  index,
 }: {
-  category: {
-    icon: React.ReactElement;
-    title: string;
-    skills: Array<{ name: string; color: string }>;
-  };
+  pkg: (typeof packages)[number];
   index: number;
 }) {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
   return (
     <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      className="group relative p-6 rounded-xl border border-transparent overflow-hidden"
+      className={`
+        group relative flex flex-col rounded-2xl
+        border transition-all duration-300 ease-out
+        hover:border-white/[0.15]
+        ${pkg.featured
+          ? 'border-white/[0.12] bg-white/[0.04]'
+          : 'border-white/[0.07] bg-white/[0.02]'
+        }
+      `}
       style={{
-        background: isHovering
-          ? `radial-gradient(circle 200px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-bg-intensity)), transparent), var(--color-card-surface)`
-          : 'var(--color-card-surface)',
+        willChange: 'transform, box-shadow',
+      }}
+      whileHover={{
+        y: -3,
+        boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
       }}
     >
-      {/* Animated border glow that follows mouse */}
-      <div
-        className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300"
-        style={{
-          background: `radial-gradient(circle 150px at ${mousePosition.x}px ${mousePosition.y}px, rgba(var(--glow-accent-rgb), var(--glow-accent-intensity)), transparent)`,
-          opacity: isHovering ? 1 : 0,
-          mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          maskComposite: 'xor',
-          WebkitMaskComposite: 'xor',
-          padding: '1.5px',
-        }}
-      />
-      {/* Static border */}
-      <div className="absolute inset-0 rounded-xl border border-cyan-500/20 pointer-events-none" />
+      {/* Card content — generous padding, more for featured */}
+      <div className={`relative flex flex-col flex-1 ${
+        pkg.featured ? 'p-8 md:p-10' : 'p-7 md:p-8'
+      }`}>
 
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Icon */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500/20 transition-colors">
-            {category.icon}
-          </div>
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-heading)' }}>{category.title}</h3>
-        </div>
-
-        {/* Skills List */}
-        <div className="grid grid-cols-2 gap-3">
-          {category.skills.map((skill) => (
-            <div
-              key={skill.name}
-              className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-dark-secondary/50 border border-white/5 hover:border-cyan-500/30 transition-all duration-200 group/item"
+        {/* Label / badge */}
+        <div className="mb-8">
+          {pkg.featured ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium tracking-wide border border-white/[0.1] bg-white/[0.05]"
+              style={{ color: 'var(--color-text-secondary)' }}
             >
-              <div className={`w-4 h-4 flex-shrink-0 ${skill.color === '#ffffff' ? 'tech-icon-white' : ''}`} style={{ color: skill.color }}>
-                <IconByName name={skill.name} color={skill.color} />
-              </div>
-              <span className="text-[13px] transition-colors text-center whitespace-nowrap" style={{ color: 'var(--color-text-secondary)' }}>
-                {skill.name}
-              </span>
-            </div>
-          ))}
+              <span className="w-1.5 h-1.5 rounded-full bg-white/40" />
+              {pkg.label}
+            </span>
+          ) : (
+            <span className="text-[11px] font-medium uppercase tracking-[0.1em]"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              {pkg.label}
+            </span>
+          )}
         </div>
+
+        {/* Price */}
+        <div className="mb-6">
+          <span className="text-[13px] font-normal block mb-1"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            {pkg.pricePrefix}
+          </span>
+          <span className={`font-semibold tracking-tight ${
+            pkg.featured ? 'text-[40px] md:text-[48px]' : 'text-[32px] md:text-[36px]'
+          }`}
+            style={{ color: 'var(--color-text-heading)', lineHeight: 1 }}
+          >
+            {pkg.price}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3
+          className={`font-semibold mb-3 ${
+            pkg.featured ? 'text-lg' : 'text-base'
+          }`}
+          style={{ color: 'var(--color-text-heading)' }}
+        >
+          {pkg.title}
+        </h3>
+
+        {/* Description */}
+        <p
+          className="text-[13px] leading-[1.7] mb-8"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {pkg.description}
+        </p>
+
+        {/* Thin separator */}
+        <div className="w-full h-px bg-white/[0.06] mb-7" />
+
+        {/* Includes list */}
+        <ul className={`space-y-3.5 flex-1 ${pkg.featured ? 'mb-10' : 'mb-8'}`} role="list">
+          {pkg.includes.map((item) => (
+            <li key={item} className="flex items-start gap-3">
+              <CheckMark />
+              <span
+                className="text-[13px] leading-relaxed"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {item}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {/* CTA Button */}
+        <a
+          href="#contact"
+          className={`
+            w-full py-3.5 rounded-xl text-[13px] font-medium text-center
+            cursor-pointer block transition-all duration-200
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent
+            ${pkg.featured
+              ? 'text-white hover:opacity-90'
+              : 'border border-white/[0.12] hover:border-white/[0.25] hover:bg-white/[0.04]'
+            }
+          `}
+          style={pkg.featured
+            ? { background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)' }
+            : { color: 'var(--color-text-secondary)' }
+          }
+        >
+          {pkg.cta}
+        </a>
       </div>
     </motion.div>
   );
 }
+

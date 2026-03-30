@@ -294,7 +294,7 @@ export default function About({ heading, content }: AboutProps) {
                 }}
               />
               {/* Static border */}
-              <div className="absolute inset-0 rounded-xl border border-cyan-500/20 pointer-events-none z-20" />
+              <div className="absolute inset-0 rounded-xl border border-white/[0.08] pointer-events-none z-20" />
 
               {/* Image with padding */}
               <div className="relative p-3 z-10">

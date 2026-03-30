@@ -1,8 +1,9 @@
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
-import { Inter, Fira_Code, Great_Vibes } from "next/font/google";
+import { Syne, Fira_Code, Great_Vibes } from "next/font/google";
 import ThemeProvider from "@/app/components/ThemeProvider";
+import CalendlyProvider from "@/app/components/CalendlyProvider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
   ],
 };
 
-const inter = Inter({
+const syne = Syne({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
@@ -80,7 +81,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${firaCode.variable} ${greatVibes.variable}`}
+      className={`${syne.variable} ${firaCode.variable} ${greatVibes.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
@@ -104,6 +105,7 @@ export default function RootLayout({
         <ThemeProvider>{children}</ThemeProvider>
         <SpeedInsights />
         <Analytics />
+        <CalendlyProvider />
       </body>
     </html>
   );

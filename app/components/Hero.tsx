@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 const starPositions = [
@@ -65,7 +67,7 @@ function CodeEditor() {
             padding: "1.5px",
           }}
         />
-        <div className="absolute inset-0 rounded-xl border border-cyan-500/20 pointer-events-none" />
+        <div className="absolute inset-0 rounded-xl border border-white/[0.08] pointer-events-none" />
 
         <div
           className="relative z-10 flex items-center gap-2 px-4 py-3 border-b border-white/10"
@@ -254,13 +256,13 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
             </div>
 
             <div className="mt-5 md:mt-6 animate-hero-fade-up [animation-delay:220ms] flex flex-wrap items-center gap-3">
-              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
+              <span className="inline-block px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.1] text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
                 WordPress · Shopify · Webflow
               </span>
-              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
+              <span className="inline-block px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.1] text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
                 GoHighLevel Specialist
               </span>
-              <span className="inline-block px-4 py-2 rounded-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 text-sm font-medium">
+              <span className="inline-block px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.1] text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
                 Funnel Builder
               </span>
             </div>
@@ -286,21 +288,16 @@ export default function Hero({ badge, heading, subheading }: HeroProps) {
 
               <a
                 href="#contact"
-                className="group relative px-7 py-3 rounded-xl font-semibold text-sm overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--glow-accent-rgb),0.08)]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (typeof window !== 'undefined' && window.Calendly) {
+                    window.Calendly.initPopupWidget({ url: 'https://calendly.com/shakirjoy00/30min' });
+                  }
+                }}
+                className="group relative px-7 py-3 rounded-xl font-semibold text-sm overflow-hidden transition-all duration-300 border border-white/[0.12] hover:border-white/[0.25] hover:bg-white/[0.04]"
                 style={{ color: "var(--color-text-primary)" }}
               >
-                <span
-                  className="absolute inset-0 rounded-xl"
-                  style={{
-                    padding: "2px",
-                    background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMaskComposite: "xor",
-                    maskComposite: "exclude",
-                  }}
-                />
                 <span className="relative z-10">Book a Free Call</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </a>
             </div>
           </div>

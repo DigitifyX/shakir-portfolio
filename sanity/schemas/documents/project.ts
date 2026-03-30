@@ -32,6 +32,10 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      fields: [
+        { name: 'alt', type: 'string', title: 'Alternative Text', description: 'Important for SEO and accessibility.' },
+        { name: 'title', type: 'string', title: 'Title Attribute', description: 'Used for tooltip text and SEO.' }
+      ],
     }),
     defineField({
       name: 'landscapeImage',
@@ -41,6 +45,10 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      fields: [
+        { name: 'alt', type: 'string', title: 'Alternative Text', description: 'Important for SEO and accessibility.' },
+        { name: 'title', type: 'string', title: 'Title Attribute', description: 'Used for tooltip text and SEO.' }
+      ],
     }),
     defineField({
       name: 'link',
@@ -94,7 +102,16 @@ export default defineType({
       name: 'gallery',
       title: 'Project Gallery Images',
       type: 'array',
-      of: [{ type: 'image', options: { hotspot: true } }],
+      of: [
+        { 
+          type: 'image', 
+          options: { hotspot: true },
+          fields: [
+            { name: 'alt', type: 'string', title: 'Alternative Text', description: 'Important for SEO and accessibility.' },
+            { name: 'title', type: 'string', title: 'Title Attribute', description: 'Used for tooltip text and SEO.' }
+          ]
+        }
+      ],
       description: 'Additional images for the Quick View modal.',
     }),
     defineField({

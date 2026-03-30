@@ -100,7 +100,7 @@ export default function Navbar() {
             }}
           />
           {/* Static border */}
-          <div className="absolute inset-0 rounded-full border border-cyan-500/20 pointer-events-none" />
+          <div className="absolute inset-0 rounded-full border border-white/[0.08] pointer-events-none" />
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.name;
@@ -165,7 +165,7 @@ export default function Navbar() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="fixed top-4 left-4 right-4 z-50 md:hidden"
       >
-        <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-dark-secondary/90 backdrop-blur-md border border-cyan-500/30">
+        <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-dark-secondary/90 backdrop-blur-md border border-white/[0.1]">
           <span className="text-[var(--color-text-primary)] font-semibold">Shakir</span>
           <div className="flex items-center gap-2">
             {/* Mobile Theme Toggle */}
@@ -193,7 +193,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="mt-2 px-4 py-4 rounded-2xl bg-dark-secondary/95 backdrop-blur-md border border-cyan-500/30"
+              className="mt-2 px-4 py-4 rounded-2xl bg-dark-secondary/95 backdrop-blur-md border border-white/[0.1]"
             >
               {navItems.map((item) => {
                 const Icon = item.icon;

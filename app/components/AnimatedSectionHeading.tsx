@@ -65,7 +65,7 @@ export default function AnimatedSectionHeading({
             )}
 
             {/* Main Heading */}
-            <h2 className="animate-item text-4xl md:text-5xl font-bold mb-4 text-[var(--color-text-heading)]">
+            <h2 className="animate-item section-heading-glow text-4xl md:text-5xl font-bold mb-4 text-[var(--color-text-heading)]">
                 {heading}
             </h2>
 
